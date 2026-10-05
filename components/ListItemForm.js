@@ -2,6 +2,7 @@
 
 import { useState } from 'react'
 import { createClient } from '@/utils/supabase/client'
+import ImageCropper from '@/components/ImageCropper'
 
 const CATEGORIES = [
   { key: 'tools', label: '🔧 Tools & DIY' },
@@ -21,7 +22,8 @@ export default function ListItemForm({ communityId }) {
   const [description, setDescription] = useState('')
   const [isFree, setIsFree] = useState(true)
   const [fee, setFee] = useState('')
-  const [file, setFile] = useState(null)
+  const [pendingFile, setPendingFile] = useState(null) // file waiting to be cropped
+  const [photo, setPhoto] = useState('')              // final cropped data URL
   const [loading, setLoading] = useState(false)
   const [error, setError] = useState('')
   const [note, setNote] = useState('')
@@ -33,26 +35,8 @@ export default function ListItemForm({ communityId }) {
     const { data: { user } } = await supabase.auth.getUser()
     if (!user) { window.location.href = '/'; return }
 
-    // Store the photo directly in the database as a data URL (no storage bucket needed).
-    let photos = []
-    if (file) {
-      if (file.size > 2 * 1024 * 1024) {
-        setLoading(false)
-        setError('Please choose an image under 2 MB.')
-        return
-      }
-      try {
-        const dataUrl = await new Promise((resolve, reject) => {
-          const reader = new FileReader()
-          reader.onload = () => resolve(reader.result)
-          reader.onerror = reject
-          reader.readAsDataURL(file)
-        })
-        photos = [dataUrl]
-      } catch (_) {
-        setNote('Listing saved without the photo.')
-      }
-    }
+    // The cropper already produced a compact square JPEG data URL — store it directly.
+    const photos = photo ? [photo] : []
 
     const { error: dbErr } = await supabase.from('items').insert({
       owner_id: user.id,
@@ -114,13 +98,53 @@ export default function ListItemForm({ communityId }) {
 
       <div className="field">
         <label className="label">Photo <span style={{fontWeight:500,color:'var(--muted)'}}>(optional)</span></label>
-        <input className="input" type="file" accept="image/*" onChange={(e) => setFile(e.target.files?.[0] || null)} />
-        <div className="hint">A clear photo gets borrowed faster.</div>
+
+        {photo ? (
+          <div className="photo-pick">
+            <img className="photo-thumb" src={photo} alt="Your photo" />
+            <div className="photo-pick-actions">
+              <label className="photo-btn ghost">
+                Change
+                <input type="file" accept="image/*" hidden
+                  onChange={(e) => { setPendingFile(e.target.files?.[0] || null); e.target.value = '' }} />
+              </label>
+              <button type="button" className="photo-btn ghost" onClick={() => setPhoto('')}>Remove</button>
+            </div>
+          </div>
+        ) : (
+          <label className="photo-drop">
+            <span className="photo-drop-plus">＋</span>
+            <span>Add a photo</span>
+            <input type="file" accept="image/*" hidden
+              onChange={(e) => { setPendingFile(e.target.files?.[0] || null); e.target.value = '' }} />
+          </label>
+        )}
+        <div className="hint">A clear photo gets borrowed faster. You can crop and zoom it next.</div>
       </div>
 
       <button className="btn full" disabled={loading}>
         {loading ? 'Publishing…' : 'Publish to Arabian Ranches'}
       </button>
+
+      {pendingFile && (
+        <ImageCropper
+          file={pendingFile}
+          onDone={(dataUrl) => { setPhoto(dataUrl); setPendingFile(null) }}
+          onCancel={() => setPendingFile(null)}
+        />
+      )}
+
+      <style jsx>{`
+        .photo-drop{display:flex;flex-direction:column;align-items:center;justify-content:center;gap:6px;
+          padding:26px;border:1.5px dashed #CDBFA8;border-radius:16px;background:#fff;cursor:pointer;
+          color:#6B7770;font-weight:600;font-size:14px}
+        .photo-drop-plus{font-size:30px;line-height:1;color:#F2774E;font-weight:700}
+        .photo-pick{display:flex;align-items:center;gap:14px}
+        .photo-thumb{width:96px;height:96px;object-fit:cover;border-radius:14px;border:1px solid #ECE6DB}
+        .photo-pick-actions{display:flex;flex-direction:column;gap:8px}
+        .photo-btn{background:#fff;color:#205C49;border:1.5px solid #205C49;border-radius:12px;
+          padding:9px 16px;font-weight:700;font-size:14px;cursor:pointer;text-align:center}
+      `}</style>
     </form>
   )
 }
