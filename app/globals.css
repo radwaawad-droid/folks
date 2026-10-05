@@ -49,7 +49,7 @@ a{color:inherit;text-decoration:none}
 .item{background:#fff;border:1px solid var(--line-2);border-radius:16px;overflow:hidden;box-shadow:var(--shadow-sm);
   transition:transform .14s, box-shadow .14s}
 .item:hover{transform:translateY(-3px);box-shadow:var(--shadow)}
-.item .ph{height:140px;display:flex;align-items:center;justify-content:center;font-size:48px}
+.item .ph{aspect-ratio:1/1;display:flex;align-items:center;justify-content:center;font-size:48px;background:#fff}
 .item .mt{padding:13px 14px 15px}
 .item .t{font-weight:600;font-size:15px}
 .item .p{margin-top:4px;font-weight:700;font-size:15px;color:var(--green)}
@@ -133,7 +133,7 @@ a{color:inherit;text-decoration:none}
 .stepper li.now::before{content:'●';color:var(--coral)}
 
 /* ---------- photos in cards ---------- */
-.ph-img{width:100%;height:100%;object-fit:cover;display:block}
+.ph-img{width:100%;height:100%;object-fit:contain;padding:12px;box-sizing:border-box;display:block}
 .ph{overflow:hidden}
 
 /* ---------- nav avatar ---------- */
