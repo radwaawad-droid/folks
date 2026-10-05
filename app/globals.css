@@ -351,3 +351,35 @@ a{color:inherit;text-decoration:none}
 .replies{margin-top:10px}
 .reply-body{margin:6px 0 0;font-size:14px;color:#33403a;line-height:1.5}
 .reply-compose{background:#fff;border:1px solid var(--line);border-radius:16px;padding:16px;margin-top:16px}
+
+/* ================= responsive navigation fix ================= */
+/* top bar tidy on phones: show only logo + avatar */
+@media (max-width: 760px){
+  .nav-desktop{ display:none !important; }
+  .locpill{ display:none; }
+  .page{ padding-bottom:110px; }        /* room for bottom tab bar */
+}
+/* bottom tab bar — mobile only */
+.tabbar{ display:none; }
+@media (max-width: 760px){
+  .tabbar{
+    position:fixed; left:0; right:0; bottom:0; z-index:60;
+    display:flex; align-items:center; justify-content:space-around;
+    background:rgba(255,255,255,.97); backdrop-filter:blur(10px);
+    border-top:1px solid var(--line);
+    padding:8px 6px calc(8px + env(safe-area-inset-bottom));
+  }
+  .tab{
+    flex:1; display:flex; flex-direction:column; align-items:center; gap:4px;
+    color:var(--muted); font-size:11px; font-weight:600; font-family:'DM Sans',sans-serif;
+    text-decoration:none; position:relative; padding:4px 0;
+  }
+  .tab svg{ width:24px; height:24px; }
+  .tab-add .tab-plus{
+    width:44px; height:44px; margin-top:-2px; border-radius:14px; background:var(--coral); color:#fff;
+    display:flex; align-items:center; justify-content:center; font-size:26px; line-height:1;
+    box-shadow:0 6px 16px rgba(242,119,78,.35);
+  }
+  .tab-add{ color:var(--green); }
+  .tab-badge{ top:-2px; right:50%; margin-right:-26px; }
+}
