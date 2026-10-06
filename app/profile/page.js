@@ -139,6 +139,10 @@ export default async function ProfilePage() {
         {listings.length === 0
           ? <div className="empty">You haven’t listed anything yet. Lending is how folks works — <a className="linkish" href="/list">list your first item →</a></div>
           : <div className="grid">{listings.map((it) => <ItemCard key={it.id} item={it} showStatus />)}</div>}
+
+        <div style={{ textAlign: 'center', marginTop: 34, paddingTop: 20, borderTop: '1px solid var(--line-2)' }}>
+          <a className="linkish" href="/guidelines">Community guidelines</a>
+        </div>
       </main>
     </>
   )
