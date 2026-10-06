@@ -99,7 +99,13 @@ export default async function Home() {
       </section>
 
       <footer className="lp-foot">
-        <div className="container">folks — borrow from your folks. Made for neighbours in Arabian Ranches, Dubai.</div>
+        <div className="container">
+          folks — borrow from your folks. Made for neighbours in Arabian Ranches, Dubai.
+          <br />
+          <Link href="/guidelines" className="lp-navlink" style={{ display: 'inline-block', marginTop: 10 }}>
+            Community guidelines
+          </Link>
+        </div>
       </footer>
     </div>
   )
