@@ -43,18 +43,17 @@ a{color:inherit;text-decoration:none}
 .chip.on{background:var(--green);color:#fff;border-color:var(--green)}
 .browse-head{display:flex;align-items:baseline;justify-content:space-between;margin-bottom:16px}
 .browse-head h1{font-size:24px}
-.grid{display:grid;grid-template-columns:repeat(4,1fr);gap:18px}
-@media(max-width:900px){.grid{grid-template-columns:repeat(2,1fr)}}
-@media(max-width:560px){.grid{grid-template-columns:1fr}.nav-search,.locpill{display:none}}
+.grid{display:grid;grid-template-columns:repeat(auto-fill,minmax(175px,1fr));gap:16px}
+@media(max-width:560px){.grid{grid-template-columns:1fr 1fr;gap:12px}.nav-search,.locpill{display:none}}
 .item{background:#fff;border:1px solid var(--line-2);border-radius:16px;overflow:hidden;box-shadow:var(--shadow-sm);
   transition:transform .14s, box-shadow .14s}
 .item:hover{transform:translateY(-3px);box-shadow:var(--shadow)}
 .item .ph{aspect-ratio:1/1;display:flex;align-items:center;justify-content:center;font-size:48px;background:#fff}
-.item .mt{padding:13px 14px 15px}
-.item .t{font-weight:600;font-size:15px}
-.item .p{margin-top:4px;font-weight:700;font-size:15px;color:var(--green)}
+.item .mt{padding:11px 12px 13px}
+.item .t{font-weight:600;font-size:14px}
+.item .p{margin-top:3px;font-weight:700;font-size:14px;color:var(--green)}
 .item .p.free{color:var(--coral)}
-.item .l{margin-top:9px;font-size:12px;color:var(--muted)}
+.item .l{margin-top:7px;font-size:11.5px;color:var(--muted)}
 .star{color:var(--amber)} .vk{color:var(--verify)}
 .ph-tools{background:linear-gradient(140deg,#E7F0EC,#CFE3D8)}
 .ph-baby{background:linear-gradient(140deg,#FBEFE6,#F6DCC8)}
@@ -133,7 +132,7 @@ a{color:inherit;text-decoration:none}
 .stepper li.now::before{content:'●';color:var(--coral)}
 
 /* ---------- photos in cards ---------- */
-.ph-img{width:100%;height:100%;object-fit:contain;padding:12px;box-sizing:border-box;display:block}
+.ph-img{width:100%;height:100%;object-fit:contain;padding:10px;box-sizing:border-box;display:block}
 .ph{overflow:hidden}
 
 /* ---------- nav avatar ---------- */
