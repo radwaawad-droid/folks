@@ -3,6 +3,7 @@
 import { useState } from 'react'
 import { useRouter } from 'next/navigation'
 import { createClient } from '@/utils/supabase/client'
+import { notify } from '@/lib/notify'
 
 export default function RequestForm({ item, isSample }) {
   const router = useRouter()
@@ -30,7 +31,7 @@ export default function RequestForm({ item, isSample }) {
       return
     }
 
-    const { error } = await supabase.from('bookings').insert({
+    const { data: created, error } = await supabase.from('bookings').insert({
       item_id: item.id,
       borrower_id: user.id,
       lender_id: item.owner_id,
@@ -38,9 +39,11 @@ export default function RequestForm({ item, isSample }) {
       end_date: end || null,
       message,
       fee_total: 0,
-    })
+    }).select('id').single()
     setLoading(false)
     if (error) { setError(error.message); return }
+    // Email the owner that they have a new request (best-effort).
+    if (created?.id) notify({ type: 'request', bookingId: created.id })
     setSent(true)
   }
 

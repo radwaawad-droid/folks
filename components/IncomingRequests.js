@@ -2,6 +2,7 @@
 
 import { useState } from 'react'
 import { createClient } from '@/utils/supabase/client'
+import { notify } from '@/lib/notify'
 
 export default function IncomingRequests({ requests }) {
   const supabase = createClient()
@@ -13,6 +14,8 @@ export default function IncomingRequests({ requests }) {
     const { error } = await supabase.from('bookings').update({ status }).eq('id', id)
     setBusy(null)
     if (error) { setErr(error.message); return }
+    // Email the borrower about the decision (best-effort).
+    if (status === 'accepted' || status === 'declined') notify({ type: status, bookingId: id })
     window.location.reload()
   }
 

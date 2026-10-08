@@ -9,6 +9,7 @@ export default function EditProfileForm({ profile }) {
   const supabase = createClient()
   const [fullName, setFullName] = useState(profile.full_name || '')
   const [subArea, setSubArea] = useState(profile.sub_area || '')
+  const [email, setEmail] = useState(profile.notify_email || '')
   const [preview, setPreview] = useState(profile.avatar_url || null)
   const [file, setFile] = useState(null)
   const [loading, setLoading] = useState(false)
@@ -37,6 +38,7 @@ export default function EditProfileForm({ profile }) {
     const { error: upErr } = await supabase.from('profiles').update({
       full_name: fullName.trim(),
       sub_area: subArea || null,
+      notify_email: email.trim().toLowerCase() || null,
       avatar_url,
     }).eq('id', user.id)
 
@@ -70,6 +72,13 @@ export default function EditProfileForm({ profile }) {
           <option value="">Select your community…</option>
           {SUB_AREAS.map((a) => <option key={a} value={a}>{a}</option>)}
         </select>
+      </div>
+
+      <div className="field">
+        <label className="label">Email</label>
+        <input className="input" type="email" value={email} onChange={(e) => setEmail(e.target.value)}
+          placeholder="you@example.com" autoComplete="email" />
+        <div className="hint">For notifications when a neighbour wants to borrow or messages you. Never shared.</div>
       </div>
 
       <div className="field">

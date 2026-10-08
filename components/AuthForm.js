@@ -14,6 +14,7 @@ export default function AuthForm() {
   const [mode, setMode] = useState('signup')   // 'signup' | 'signin'
   const [fullName, setFullName] = useState('')
   const [subArea, setSubArea] = useState('')
+  const [email, setEmail] = useState('')
   const [username, setUsername] = useState('')
   const [password, setPassword] = useState('')
   const [loading, setLoading] = useState(false)
@@ -34,6 +35,9 @@ export default function AuthForm() {
     if (mode === 'signup') {
       if (!fullName.trim() || !subArea) {
         setLoading(false); setError('Please fill in your name and community.'); return
+      }
+      if (!/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(email.trim())) {
+        setLoading(false); setError('Please enter a valid email so we can send you notifications.'); return
       }
       if (password.length < 6) {
         setLoading(false); setError('Password must be at least 6 characters.'); return
@@ -60,6 +64,7 @@ export default function AuthForm() {
           full_name: fullName.trim(),
           username: uname,
           sub_area: subArea,
+          notify_email: email.trim().toLowerCase(),
           community_id: comm?.id || null,
           phone_verified: true,
           resident_verified: true,
@@ -99,6 +104,11 @@ export default function AuthForm() {
               <option value="">Select your community…</option>
               {SUB_AREAS.map((a) => <option key={a} value={a}>{a}</option>)}
             </select>
+
+            <label className="label" style={{ marginTop: 14 }}>Email</label>
+            <input className="input" type="email" value={email} onChange={(e) => setEmail(e.target.value)}
+              placeholder="you@example.com" autoComplete="email" required />
+            <div className="hint">We&apos;ll email you when a neighbour wants to borrow or sends a message. Never shared.</div>
           </>
         )}
 

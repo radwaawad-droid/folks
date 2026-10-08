@@ -2,6 +2,7 @@
 
 import { useEffect, useRef, useState } from 'react'
 import { createClient } from '@/utils/supabase/client'
+import { notify } from '@/lib/notify'
 
 export default function ChatThread({ bookingId, meId, initial }) {
   const supabase = createClient()
@@ -59,6 +60,8 @@ export default function ChatThread({ bookingId, meId, initial }) {
     setSending(false)
     if (!error && data) {
       setMessages((cur) => cur.some((m) => m.id === data.id) ? cur : [...cur, data])
+      // Email the other person (best-effort; server collapses bursts into one email).
+      notify({ type: 'message', bookingId })
     }
   }
 
