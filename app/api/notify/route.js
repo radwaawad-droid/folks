@@ -9,6 +9,44 @@ const SITE = process.env.NEXT_PUBLIC_SITE_URL || 'https://folks-pearl.vercel.app
 // Until you verify your own domain in Resend, keep the default test sender.
 const FROM = process.env.NOTIFY_FROM || 'folks <onboarding@resend.dev>'
 
+// Temporary diagnostic — reports config health (no secrets). Remove when done.
+export async function GET() {
+  const out = {
+    hasResendKey: !!process.env.RESEND_API_KEY,
+    hasServiceKey: !!process.env.SUPABASE_SERVICE_ROLE_KEY,
+    from: FROM,
+    site: SITE,
+    columnExists: false,
+    profilesWithEmail: null,
+    resendTest: null,
+  }
+  try {
+    const admin = createAdminClient()
+    const { count, error } = await admin
+      .from('profiles').select('notify_email', { count: 'exact', head: true })
+      .not('notify_email', 'is', null)
+    out.columnExists = !error
+    out.profilesWithEmail = error ? error.message : count
+  } catch (e) {
+    out.profilesWithEmail = String(e)
+  }
+  // Ask Resend who we are (confirms the key works and if a domain is verified).
+  try {
+    if (process.env.RESEND_API_KEY) {
+      const r = await fetch('https://api.resend.com/domains', {
+        headers: { Authorization: `Bearer ${process.env.RESEND_API_KEY}` },
+      })
+      const j = await r.json().catch(() => ({}))
+      out.resendTest = r.ok
+        ? { ok: true, verifiedDomains: (j.data || []).filter((d) => d.status === 'verified').map((d) => d.name) }
+        : { ok: false, status: r.status }
+    }
+  } catch (e) {
+    out.resendTest = { ok: false, error: String(e) }
+  }
+  return NextResponse.json(out)
+}
+
 function emailHtml({ name, intro, link, cta }) {
   return `
   <div style="font-family:Arial,Helvetica,sans-serif;max-width:480px;margin:0 auto;padding:28px 24px;color:#1C2620">
