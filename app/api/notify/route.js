@@ -12,7 +12,10 @@ const FROM = process.env.NOTIFY_FROM || 'folks <onboarding@resend.dev>'
 // Temporary diagnostic — reports config health (no secrets). Remove when done.
 export async function GET() {
   const out = {
+    provider: process.env.BREVO_API_KEY ? 'brevo' : (process.env.RESEND_API_KEY ? 'resend' : 'none'),
     hasResendKey: !!process.env.RESEND_API_KEY,
+    hasBrevoKey: !!process.env.BREVO_API_KEY,
+    hasBrevoSender: !!process.env.BREVO_SENDER,
     hasServiceKey: !!process.env.SUPABASE_SERVICE_ROLE_KEY,
     from: FROM,
     site: SITE,
@@ -45,6 +48,35 @@ export async function GET() {
     out.resendTest = { ok: false, error: String(e) }
   }
   return NextResponse.json(out)
+}
+
+// Sends via Brevo if a Brevo key is set (single-sender, no domain needed — great for
+// testing), otherwise via Resend. Returns { ok, provider, skipped?, detail? }.
+async function sendEmail({ to, subject, html, name }) {
+  if (process.env.BREVO_API_KEY) {
+    const sender = process.env.BREVO_SENDER
+    if (!sender) return { ok: false, skipped: 'no-brevo-sender' }
+    const r = await fetch('https://api.brevo.com/v3/smtp/email', {
+      method: 'POST',
+      headers: { 'api-key': process.env.BREVO_API_KEY, 'Content-Type': 'application/json', accept: 'application/json' },
+      body: JSON.stringify({
+        sender: { name: 'folks', email: sender },
+        to: [{ email: to, name: name || undefined }],
+        subject,
+        htmlContent: html,
+      }),
+    })
+    return r.ok ? { ok: true, provider: 'brevo' } : { ok: false, provider: 'brevo', detail: await r.text().catch(() => '') }
+  }
+  if (process.env.RESEND_API_KEY) {
+    const r = await fetch('https://api.resend.com/emails', {
+      method: 'POST',
+      headers: { Authorization: `Bearer ${process.env.RESEND_API_KEY}`, 'Content-Type': 'application/json' },
+      body: JSON.stringify({ from: FROM, to, subject, html }),
+    })
+    return r.ok ? { ok: true, provider: 'resend' } : { ok: false, provider: 'resend', detail: await r.text().catch(() => '') }
+  }
+  return { ok: false, skipped: 'no-key' }
 }
 
 function emailHtml({ name, intro, link, cta }) {
@@ -137,22 +169,14 @@ export async function POST(req) {
     const to = rp?.notify_email
     if (!to) return NextResponse.json({ ok: true, skipped: 'no-email' })
 
-    const key = process.env.RESEND_API_KEY
-    if (!key) return NextResponse.json({ ok: true, skipped: 'no-key' })
-
     const html = emailHtml({ name: rp?.full_name, intro, link: `${SITE}${path}`, cta })
+    const sent = await sendEmail({ to, subject, html, name: rp?.full_name })
 
-    const r = await fetch('https://api.resend.com/emails', {
-      method: 'POST',
-      headers: { Authorization: `Bearer ${key}`, 'Content-Type': 'application/json' },
-      body: JSON.stringify({ from: FROM, to, subject, html }),
-    })
-
-    if (!r.ok) {
-      const detail = await r.text().catch(() => '')
-      return NextResponse.json({ ok: false, error: 'send failed', detail }, { status: 502 })
+    if (sent.skipped) return NextResponse.json({ ok: true, skipped: sent.skipped })
+    if (!sent.ok) {
+      return NextResponse.json({ ok: false, error: 'send failed', provider: sent.provider, detail: sent.detail }, { status: 502 })
     }
-    return NextResponse.json({ ok: true })
+    return NextResponse.json({ ok: true, provider: sent.provider })
   } catch (e) {
     return NextResponse.json({ ok: false, error: String(e) }, { status: 500 })
   }
