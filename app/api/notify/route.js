@@ -9,46 +9,6 @@ const SITE = process.env.NEXT_PUBLIC_SITE_URL || 'https://folks-pearl.vercel.app
 // Until you verify your own domain in Resend, keep the default test sender.
 const FROM = process.env.NOTIFY_FROM || 'folks <onboarding@resend.dev>'
 
-// Temporary diagnostic — reports config health (no secrets). Remove when done.
-export async function GET() {
-  const out = {
-    provider: process.env.BREVO_API_KEY ? 'brevo' : (process.env.RESEND_API_KEY ? 'resend' : 'none'),
-    hasResendKey: !!process.env.RESEND_API_KEY,
-    hasBrevoKey: !!process.env.BREVO_API_KEY,
-    hasBrevoSender: !!process.env.BREVO_SENDER,
-    hasServiceKey: !!process.env.SUPABASE_SERVICE_ROLE_KEY,
-    from: FROM,
-    site: SITE,
-    columnExists: false,
-    profilesWithEmail: null,
-    resendTest: null,
-  }
-  try {
-    const admin = createAdminClient()
-    const { count, error } = await admin
-      .from('profiles').select('notify_email', { count: 'exact', head: true })
-      .not('notify_email', 'is', null)
-    out.columnExists = !error
-    out.profilesWithEmail = error ? error.message : count
-  } catch (e) {
-    out.profilesWithEmail = String(e)
-  }
-  // Ask Resend who we are (confirms the key works and if a domain is verified).
-  try {
-    if (process.env.RESEND_API_KEY) {
-      const r = await fetch('https://api.resend.com/domains', {
-        headers: { Authorization: `Bearer ${process.env.RESEND_API_KEY}` },
-      })
-      const j = await r.json().catch(() => ({}))
-      out.resendTest = r.ok
-        ? { ok: true, verifiedDomains: (j.data || []).filter((d) => d.status === 'verified').map((d) => d.name) }
-        : { ok: false, status: r.status }
-    }
-  } catch (e) {
-    out.resendTest = { ok: false, error: String(e) }
-  }
-  return NextResponse.json(out)
-}
 
 // Sends via Brevo if a Brevo key is set (single-sender, no domain needed — great for
 // testing), otherwise via Resend. Returns { ok, provider, skipped?, detail? }.
