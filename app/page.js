@@ -105,6 +105,10 @@ export default async function Home() {
           <Link href="/guidelines" className="lp-navlink" style={{ display: 'inline-block', marginTop: 10 }}>
             Community guidelines
           </Link>
+          <span style={{ margin: '0 8px', color: 'var(--muted)' }}>·</span>
+          <Link href="/privacy" className="lp-navlink" style={{ display: 'inline-block', marginTop: 10 }}>
+            Privacy policy
+          </Link>
         </div>
       </footer>
     </div>
