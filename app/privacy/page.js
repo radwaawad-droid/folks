@@ -85,7 +85,7 @@ export default function PrivacyPage() {
           <h2 style={h2}>Contact</h2>
           <p style={{ margin: 0, lineHeight: 1.6, fontSize: 14 }}>
             Questions about your privacy, or want your data removed? Email us at{' '}
-            <strong>CONTACT_EMAIL</strong>.
+            <strong>dxbfolks@gmail.com</strong>.
           </p>
           <p style={{ margin: '12px 0 0', color: 'var(--muted)', fontSize: 13 }}>
             Last updated October 2026. We may update this policy as folks grows; we&apos;ll post any changes here.
