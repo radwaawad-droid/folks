@@ -21,7 +21,10 @@ export default async function Home() {
     <div className="lp">
       <header className="lp-nav" id="top">
         <div className="container lp-nav-in">
-          <div className="logo">folks <span className="d" /></div>
+          <div>
+            <div className="logo">folks <span className="d" /></div>
+            <div style={{ fontSize: 12, color: 'var(--muted)', marginTop: 1, letterSpacing: '.3px' }}>a closer community</div>
+          </div>
           <Link href="/browse" className="lp-navlink">Browse first →</Link>
         </div>
       </header>
