@@ -1,0 +1,24 @@
+{
+  "appId": "ae.folks.app",
+  "appName": "folks",
+  "webDir": "public",
+  "server": {
+    "url": "https://folks-pearl.vercel.app",
+    "cleartext": false
+  },
+  "ios": {
+    "contentInset": "always"
+  },
+  "backgroundColor": "#FAF6EF",
+  "plugins": {
+    "SplashScreen": {
+      "launchShowDuration": 1200,
+      "backgroundColor": "#205C49",
+      "showSpinner": false
+    },
+    "StatusBar": {
+      "style": "LIGHT",
+      "backgroundColor": "#205C49"
+    }
+  }
+}

@@ -27,3 +27,7 @@ yarn-error.log*
 # typescript
 *.tsbuildinfo
 next-env.d.ts
+
+# capacitor native projects (generated on your Mac with: npx cap add ios/android)
+/ios
+/android
