@@ -15,7 +15,7 @@ const card = {
   boxShadow: 'var(--shadow-sm)',
 }
 const h2 = {
-  fontFamily: "'Quicksand', sans-serif",
+  fontFamily: "'Fraunces', Georgia, serif",
   fontWeight: 700,
   fontSize: 19,
   color: 'var(--green)',

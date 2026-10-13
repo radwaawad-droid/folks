@@ -110,7 +110,7 @@ export default function ImageCropper({ file, onDone, onCancel, out = 900 }) {
           display:flex;align-items:center;justify-content:center;padding:18px}
         .cropper-card{background:#FAF6EF;border-radius:22px;padding:22px;max-width:420px;width:100%;
           box-shadow:0 20px 60px rgba(0,0,0,.35)}
-        .cropper-title{font-family:'Quicksand',sans-serif;font-weight:700;font-size:19px;color:#1C2620}
+        .cropper-title{font-family:'Fraunces',Georgia,serif;font-weight:700;font-size:19px;color:#1C2620}
         .cropper-sub{color:#6B7770;font-size:13px;margin:4px 0 16px}
         .cropper-frame{position:relative;margin:0 auto;border-radius:16px;overflow:hidden;background:#fff;
           border:1px solid #ECE6DB;touch-action:none;cursor:grab}
@@ -124,7 +124,7 @@ export default function ImageCropper({ file, onDone, onCancel, out = 900 }) {
         .cropper-zoom input{flex:1;accent-color:#205C49}
         .cropper-actions{display:flex;gap:12px;margin-top:18px}
         .cropper-btn{flex:1;background:#F2774E;color:#fff;border:none;border-radius:14px;padding:14px;
-          font-family:'Quicksand',sans-serif;font-weight:700;font-size:15px;cursor:pointer}
+          font-family:'Fraunces',Georgia,serif;font-weight:700;font-size:15px;cursor:pointer}
         .cropper-btn.ghost{background:#fff;color:#205C49;border:1.5px solid #205C49}
       `}</style>
     </div>
