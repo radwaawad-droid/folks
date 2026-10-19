@@ -9,14 +9,14 @@ import { sampleById } from '@/lib/sample'
 export const dynamic = 'force-dynamic'
 
 const CATEGORY_META = {
-  tools:   { emoji: '🔧', cls: 'ph-tools', label: 'Tools & DIY' },
-  baby:    { emoji: '👶', cls: 'ph-baby', label: 'Baby & Kids' },
-  party:   { emoji: '🎉', cls: 'ph-party', label: 'Party & BBQ' },
-  bbq:     { emoji: '🍖', cls: 'ph-party', label: 'Party & BBQ' },
-  camping: { emoji: '🏕️', cls: 'ph-camp', label: 'Camping' },
-  sports:  { emoji: '⚽', cls: 'ph-default', label: 'Sports' },
-  kitchen: { emoji: '🍳', cls: 'ph-default', label: 'Kitchen' },
-  garden:  { emoji: '🌿', cls: 'ph-camp', label: 'Garden' },
+  tools:       { emoji: '🔧', cls: 'ph-tools', label: 'Tools' },
+  sports:      { emoji: '⚽', cls: 'ph-camp', label: 'Sports' },
+  party:       { emoji: '🎉', cls: 'ph-party', label: 'Party & Events' },
+  garden:      { emoji: '🌿', cls: 'ph-camp', label: 'Lawn & Garden' },
+  electronics: { emoji: '🔌', cls: 'ph-default', label: 'Electronics' },
+  toys:        { emoji: '🧸', cls: 'ph-baby', label: 'Toys & Games' },
+  pets:        { emoji: '🐾', cls: 'ph-default', label: 'Pet Supplies' },
+  bbq:         { emoji: '🍖', cls: 'ph-party', label: 'BBQ' },
 }
 
 export default async function ItemPage({ params }) {

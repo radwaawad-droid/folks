@@ -1,14 +1,14 @@
 import Link from 'next/link'
 
 const CATEGORY_META = {
-  tools:   { emoji: '🔧', cls: 'ph-tools' },
-  baby:    { emoji: '👶', cls: 'ph-baby' },
-  party:   { emoji: '🎉', cls: 'ph-party' },
-  bbq:     { emoji: '🍖', cls: 'ph-party' },
-  camping: { emoji: '🏕️', cls: 'ph-camp' },
-  sports:  { emoji: '⚽', cls: 'ph-default' },
-  kitchen: { emoji: '🍳', cls: 'ph-default' },
-  garden:  { emoji: '🌿', cls: 'ph-camp' },
+  tools:       { emoji: '🔧', cls: 'ph-tools' },
+  sports:      { emoji: '⚽', cls: 'ph-camp' },
+  party:       { emoji: '🎉', cls: 'ph-party' },
+  garden:      { emoji: '🌿', cls: 'ph-camp' },
+  electronics: { emoji: '🔌', cls: 'ph-default' },
+  toys:        { emoji: '🧸', cls: 'ph-baby' },
+  pets:        { emoji: '🐾', cls: 'ph-default' },
+  bbq:         { emoji: '🍖', cls: 'ph-party' },
 }
 
 // showStatus: when true (e.g. on your own profile), show an Active/Paused pill.

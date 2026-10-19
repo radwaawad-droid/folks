@@ -5,11 +5,15 @@ import ItemCard from '@/components/ItemCard'
 
 // Each filter maps to the item categories it should include.
 const FILTERS = [
-  { key: 'all',     label: 'All',            cats: null },
-  { key: 'tools',   label: 'Tools & DIY', cats: ['tools', 'garden'] },
-  { key: 'baby',    label: 'Baby & Kids', cats: ['baby'] },
-  { key: 'party',   label: 'Party & BBQ', cats: ['party', 'bbq'] },
-  { key: 'camping', label: 'Camping',     cats: ['camping', 'sports'] },
+  { key: 'all',         label: 'All',             cats: null },
+  { key: 'tools',       label: 'Tools',           cats: ['tools'] },
+  { key: 'sports',      label: 'Sports',          cats: ['sports'] },
+  { key: 'party',       label: 'Party & Events',  cats: ['party'] },
+  { key: 'garden',      label: 'Lawn & Garden',   cats: ['garden'] },
+  { key: 'electronics', label: 'Electronics',     cats: ['electronics'] },
+  { key: 'toys',        label: 'Toys & Games',    cats: ['toys'] },
+  { key: 'pets',        label: 'Pet Supplies',    cats: ['pets'] },
+  { key: 'bbq',         label: 'BBQ',             cats: ['bbq'] },
 ]
 
 export default function BrowseGrid({ items }) {

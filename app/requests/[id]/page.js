@@ -6,7 +6,7 @@ import { createClient } from '@/utils/supabase/server'
 
 export const dynamic = 'force-dynamic'
 
-const CAT_EMOJI = { tools:'🔧', baby:'👶', party:'🎉', bbq:'🍖', camping:'🏕️', sports:'⚽', kitchen:'🍳', garden:'🌿' }
+const CAT_EMOJI = { tools:'🔧', sports:'⚽', party:'🎉', garden:'🌿', electronics:'🔌', toys:'🧸', pets:'🐾', bbq:'🍖' }
 
 export default async function RequestDetail({ params }) {
   const supabase = createClient()
