@@ -53,6 +53,9 @@ export default function RequestForm({ item, isSample }) {
         <div className="burst">🎉</div>
         <h3>Request sent!</h3>
         <p>We’ll let you know as soon as the owner responds.</p>
+        {item.deposit > 0 && (
+          <p className="dep-reminder">💛 Bring the <b>AED {item.deposit} refundable deposit</b> at pickup — you’ll get it back when you return the item safely.</p>
+        )}
         <ol className="stepper">
           <li className="done">Requested</li>
           <li className="now">Waiting for the owner to accept</li>
@@ -88,6 +91,11 @@ export default function RequestForm({ item, isSample }) {
         value={message}
         onChange={(e) => setMessage(e.target.value)}
       />
+      {item.deposit > 0 && (
+        <p className="dep-reminder" style={{ marginTop: 12 }}>
+          💛 This item has a <b>AED {item.deposit} refundable deposit</b>, returned to you when you give it back safely.
+        </p>
+      )}
       <button className="btn full" style={{ marginTop: 14 }} disabled={loading}>
         {loading ? 'Sending…' : 'Send request'}
       </button>
