@@ -330,6 +330,11 @@ a{color:inherit;text-decoration:none}
 .offer-card{background:#fff;border:1px solid var(--line);border-radius:16px;padding:16px;margin-bottom:14px}
 .offer-head{display:flex;gap:12px;align-items:flex-start}
 .offer-card .chat-inline{border-top:1px solid var(--line);padding-top:12px}
+.offer-card.is-declined{opacity:.7}
+.offer-head .btn.sm{flex:0 0 auto;align-self:flex-start}
+.offer-badge{display:inline-block;margin-left:8px;font-size:10px;font-weight:700;padding:3px 8px;border-radius:999px;vertical-align:middle}
+.offer-badge.ok{background:var(--green-soft);color:var(--green)}
+.offer-badge.no{background:#EFE9DF;color:#8A8172}
 
 /* ---------- avatars as images ---------- */
 .avatar-img{object-fit:cover}

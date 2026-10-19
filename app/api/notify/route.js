@@ -100,6 +100,36 @@ export async function POST(req) {
       return NextResponse.json({ ok: true, provider: sent.provider })
     }
 
+    // --- Wanted board: the requester accepted a neighbour's offer. ---
+    if (type === 'wanted_accepted') {
+      if (!replyId) return NextResponse.json({ ok: false, error: 'missing replyId' }, { status: 400 })
+      const { data: rr } = await admin
+        .from('request_replies')
+        .select('id, responder_id, request:item_requests!request_id(id, title, requester_id)')
+        .eq('id', replyId)
+        .maybeSingle()
+      if (!rr || !rr.request) return NextResponse.json({ ok: false, error: 'not found' }, { status: 404 })
+      // Only the requester can trigger this.
+      if (user.id !== rr.request.requester_id) return NextResponse.json({ ok: false, error: 'forbidden' }, { status: 403 })
+
+      const { data: rp } = await admin
+        .from('profiles').select('notify_email, full_name').eq('id', rr.responder_id).maybeSingle()
+      const to = rp?.notify_email
+      if (!to) return NextResponse.json({ ok: true, skipped: 'no-email' })
+
+      const reqTitle = rr.request.title || 'a Wanted post'
+      const html = emailHtml({
+        name: rp?.full_name,
+        intro: `Good news — your offer on the Wanted post <strong>“${reqTitle}”</strong> was accepted. Open folks to chat and arrange an easy pickup.`,
+        link: `${SITE}/requests/${rr.request.id}`,
+        cta: 'Arrange pickup',
+      })
+      const sent = await sendEmail({ to, subject: `Your offer for “${reqTitle}” was accepted 🎉`, html, name: rp?.full_name })
+      if (sent.skipped) return NextResponse.json({ ok: true, skipped: sent.skipped })
+      if (!sent.ok) return NextResponse.json({ ok: false, error: 'send failed', provider: sent.provider, detail: sent.detail }, { status: 502 })
+      return NextResponse.json({ ok: true, provider: sent.provider })
+    }
+
     // --- Wanted board: a new message in a reply's private chat. ---
     if (type === 'wanted_message') {
       if (!replyId) return NextResponse.json({ ok: false, error: 'missing replyId' }, { status: 400 })

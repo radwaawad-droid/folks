@@ -4,6 +4,7 @@ import Nav from '@/components/Nav'
 import RequestChat from '@/components/RequestChat'
 import RequestOfferForm from '@/components/RequestOfferForm'
 import RequestStatus from '@/components/RequestStatus'
+import AcceptOffer from '@/components/AcceptOffer'
 import { createClient } from '@/utils/supabase/server'
 import { fetchCategories } from '@/lib/categories'
 
@@ -62,6 +63,7 @@ export default async function RequestDetail({ params }) {
   }
 
   const canOffer = user && !isOwner && !myReply && !closed
+  const acceptedExists = replies.some((r) => r.status === 'accepted')
 
   return (
     <>
@@ -96,27 +98,42 @@ export default async function RequestDetail({ params }) {
                 ? `${replies.length} ${replies.length === 1 ? 'neighbour has' : 'neighbours have'} offered`
                 : 'Your conversation'}
             </h3>
-            {visibleReplies.map((r) => (
-              <div className="offer-card" key={r.id}>
-                <div className="offer-head">
-                  <div className="avatar" style={{ width: 38, height: 38 }}>
-                    {(r.responder?.full_name || 'N').charAt(0).toUpperCase()}
+            {visibleReplies.map((r) => {
+              const declined = r.status === 'declined'
+              const accepted = r.status === 'accepted'
+              return (
+                <div className={`offer-card ${declined ? 'is-declined' : ''}`} key={r.id}>
+                  <div className="offer-head">
+                    <div className="avatar" style={{ width: 38, height: 38 }}>
+                      {(r.responder?.full_name || 'N').charAt(0).toUpperCase()}
+                    </div>
+                    <div className="row-main">
+                      <b>{r.responder?.full_name || 'Neighbour'}
+                        {accepted && <span className="offer-badge ok">Accepted</span>}
+                        {declined && <span className="offer-badge no">Declined</span>}
+                        {r.responder?.sub_area ? <span className="muted-sub" style={{ margin: 0, fontWeight: 400 }}> · {r.responder.sub_area}</span> : null}
+                      </b>
+                      <p className="reply-body">{r.body}</p>
+                    </div>
+                    {isOwner && !closed && !accepted && !declined && !acceptedExists && (
+                      <AcceptOffer requestId={id} replyId={r.id} />
+                    )}
                   </div>
-                  <div className="row-main">
-                    <b>{r.responder?.full_name || 'Neighbour'}
-                      {r.responder?.sub_area ? <span className="muted-sub" style={{ margin: 0, fontWeight: 400 }}> · {r.responder.sub_area}</span> : null}
-                    </b>
-                    <p className="reply-body">{r.body}</p>
-                  </div>
+                  {declined ? (
+                    <p className="muted-sub" style={{ fontSize: 12, margin: '4px 0 0' }}>
+                      {isOwner ? 'You went with another neighbour.' : 'The requester went with another neighbour this time.'}
+                    </p>
+                  ) : (
+                    <RequestChat
+                      replyId={r.id}
+                      meId={user.id}
+                      initial={msgsByReply[r.id] || []}
+                      disabled={closed}
+                    />
+                  )}
                 </div>
-                <RequestChat
-                  replyId={r.id}
-                  meId={user.id}
-                  initial={msgsByReply[r.id] || []}
-                  disabled={closed}
-                />
-              </div>
-            ))}
+              )
+            })}
             {isOwner && !closed && (
               <p className="muted-sub" style={{ fontSize: 12 }}>
                 Agreed with someone? Mark the request as found above to close it.
