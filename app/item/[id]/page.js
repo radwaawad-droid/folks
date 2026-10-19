@@ -146,13 +146,7 @@ export default async function ItemPage({ params }) {
                 photos: item.photos || [], status: item.status,
               }} />
             ) : (
-              <>
-                <RequestForm item={{ id: item.id, title: item.title, owner_id: item.owner_id, is_free: item.is_free, fee_per_day: item.fee_per_day, deposit: item.deposit }} isSample={isSample} />
-                <div className="guarantee">
-                  <span>🛡️</span>
-                  <small><b>Protected by the folks Guarantee.</b> Every borrow is covered up to AED 1,000.</small>
-                </div>
-              </>
+              <RequestForm item={{ id: item.id, title: item.title, owner_id: item.owner_id, is_free: item.is_free, fee_per_day: item.fee_per_day, deposit: item.deposit }} isSample={isSample} />
             )}
           </aside>
         </div>
