@@ -73,12 +73,24 @@ export default function AuthForm() {
       window.location.href = '/browse'
     } else {
       // Sign in: existing users only.
-      const { error: inErr } = await supabase.auth.signInWithPassword({
+      const { data: signData, error: inErr } = await supabase.auth.signInWithPassword({
         email: toEmail(uname),
         password,
       })
+      if (inErr) { setLoading(false); setError('Wrong username or password, or no account yet. New here? Switch to Sign up.'); return }
+
+      // Suspended accounts can't enter.
+      const uid = signData?.user?.id
+      if (uid) {
+        const { data: prof } = await supabase.from('profiles').select('banned').eq('id', uid).maybeSingle()
+        if (prof?.banned) {
+          await supabase.auth.signOut()
+          setLoading(false)
+          setError('This account has been suspended. Please contact folks if you think this is a mistake.')
+          return
+        }
+      }
       setLoading(false)
-      if (inErr) { setError('Wrong username or password, or no account yet. New here? Switch to Sign up.'); return }
       window.location.href = '/browse'
     }
   }

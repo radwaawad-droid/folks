@@ -83,6 +83,10 @@ export default async function ProfilePage() {
           </div>
         </section>
 
+        {profile.is_admin && (
+          <a className="btn sm" href="/admin" style={{ display: 'inline-block', marginBottom: 6 }}>Admin dashboard</a>
+        )}
+
         {/* Incoming borrow requests (owner side) */}
         <h2 className="sec-title">Requests to borrow your items</h2>
         {requests.length === 0

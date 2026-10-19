@@ -1,4 +1,5 @@
 import Link from 'next/link'
+import { redirect } from 'next/navigation'
 import { createClient } from '@/utils/supabase/server'
 
 export default async function Nav() {
@@ -7,14 +8,18 @@ export default async function Nav() {
 
   let initial = 'Y'
   let avatarUrl = null
+  let isAdmin = false
   let pendingRequests = 0
   let unreadMessages = 0
 
   if (user) {
     const { data: profile } = await supabase
-      .from('profiles').select('full_name, avatar_url').eq('id', user.id).maybeSingle()
+      .from('profiles').select('full_name, avatar_url, banned, is_admin').eq('id', user.id).maybeSingle()
+    // Banned members are signed out of the app everywhere Nav renders.
+    if (profile?.banned) redirect('/suspended')
     initial = (profile?.full_name || 'Y').charAt(0).toUpperCase()
     avatarUrl = profile?.avatar_url || null
+    isAdmin = !!profile?.is_admin
 
     const { count: reqCount } = await supabase
       .from('bookings')
@@ -60,6 +65,7 @@ export default async function Nav() {
                 Messages
                 {unreadMessages > 0 && <span className="nav-badge">{unreadMessages}</span>}
               </Link>
+              {isAdmin && <Link href="/admin" className="nav-link nav-desktop">Admin</Link>}
               <Link href="/list" className="btn nav-desktop" style={{ whiteSpace: 'nowrap' }}>＋ List an item</Link>
               <Avatar />
             </>
