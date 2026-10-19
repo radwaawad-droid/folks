@@ -1,7 +1,8 @@
 import { redirect } from 'next/navigation'
 import Link from 'next/link'
 import Nav from '@/components/Nav'
-import RequestReplies from '@/components/RequestReplies'
+import RequestChat from '@/components/RequestChat'
+import RequestOfferForm from '@/components/RequestOfferForm'
 import RequestStatus from '@/components/RequestStatus'
 import { createClient } from '@/utils/supabase/server'
 import { fetchCategories } from '@/lib/categories'
@@ -33,13 +34,34 @@ export default async function RequestDetail({ params }) {
     )
   }
 
+  const isOwner = user && user.id === req.requester_id
+  const closed = req.status === 'closed'
+
+  // All offers on this request.
   const { data: replies = [] } = await supabase
     .from('request_replies')
     .select('*, responder:profiles!responder_id(full_name, sub_area)')
     .eq('request_id', id)
     .order('created_at', { ascending: true })
 
-  const isOwner = user && user.id === req.requester_id
+  // Which offers can the current viewer see a private board for?
+  //  - the requester sees every offer
+  //  - a neighbour sees only their own offer
+  const myReply = user ? replies.find((r) => r.responder_id === user.id) : null
+  const visibleReplies = isOwner ? replies : (myReply ? [myReply] : [])
+
+  // Load the private messages for the boards this viewer can see.
+  let msgsByReply = {}
+  if (user && visibleReplies.length) {
+    const ids = visibleReplies.map((r) => r.id)
+    const { data: msgs = [] } = await supabase
+      .from('request_messages').select('*').in('reply_id', ids).order('created_at', { ascending: true })
+    msgsByReply = (msgs || []).reduce((acc, m) => {
+      (acc[m.reply_id] = acc[m.reply_id] || []).push(m); return acc
+    }, {})
+  }
+
+  const canOffer = user && !isOwner && !myReply && !closed
 
   return (
     <>
@@ -63,13 +85,56 @@ export default async function RequestDetail({ params }) {
 
         <RequestStatus requestId={id} status={req.status} isOwner={isOwner} />
 
-        <RequestReplies
-          requestId={id}
-          meId={user?.id || null}
-          isOwner={isOwner}
-          initial={replies}
-          closed={req.status === 'closed'}
-        />
+        {/* Offer box for a neighbour who hasn't offered yet */}
+        {canOffer && <RequestOfferForm requestId={id} meId={user.id} />}
+
+        {/* Private boards */}
+        {user && visibleReplies.length > 0 && (
+          <section className="offers">
+            <h3 className="sec-title">
+              {isOwner
+                ? `${replies.length} ${replies.length === 1 ? 'neighbour has' : 'neighbours have'} offered`
+                : 'Your conversation'}
+            </h3>
+            {visibleReplies.map((r) => (
+              <div className="offer-card" key={r.id}>
+                <div className="offer-head">
+                  <div className="avatar" style={{ width: 38, height: 38 }}>
+                    {(r.responder?.full_name || 'N').charAt(0).toUpperCase()}
+                  </div>
+                  <div className="row-main">
+                    <b>{r.responder?.full_name || 'Neighbour'}
+                      {r.responder?.sub_area ? <span className="muted-sub" style={{ margin: 0, fontWeight: 400 }}> · {r.responder.sub_area}</span> : null}
+                    </b>
+                    <p className="reply-body">{r.body}</p>
+                  </div>
+                </div>
+                <RequestChat
+                  replyId={r.id}
+                  meId={user.id}
+                  initial={msgsByReply[r.id] || []}
+                  disabled={closed}
+                />
+              </div>
+            ))}
+            {isOwner && !closed && (
+              <p className="muted-sub" style={{ fontSize: 12 }}>
+                Agreed with someone? Mark the request as found above to close it.
+              </p>
+            )}
+          </section>
+        )}
+
+        {/* Empty / signed-out states */}
+        {isOwner && replies.length === 0 && !closed && (
+          <div className="empty" style={{ marginTop: 14 }}>No offers yet. Neighbours who have it will appear here with a private chat.</div>
+        )}
+        {closed && (
+          <div className="empty" style={{ marginTop: 14 }}>This request is marked as found — it’s closed.</div>
+        )}
+        {!user && (
+          <div className="empty" style={{ marginTop: 14 }}><a className="linkish" href="/">Sign in to offer this →</a></div>
+        )}
       </main>
     </>
   )

@@ -57,7 +57,7 @@ function emailHtml({ name, intro, link, cta }) {
 
 export async function POST(req) {
   try {
-    const { type, bookingId, requestId } = await req.json()
+    const { type, bookingId, requestId, replyId } = await req.json()
     if (!type) {
       return NextResponse.json({ ok: false, error: 'missing fields' }, { status: 400 })
     }
@@ -95,6 +95,52 @@ export async function POST(req) {
         cta: 'View the reply',
       })
       const sent = await sendEmail({ to, subject: `A neighbour replied about “${reqTitle}”`, html, name: rp?.full_name })
+      if (sent.skipped) return NextResponse.json({ ok: true, skipped: sent.skipped })
+      if (!sent.ok) return NextResponse.json({ ok: false, error: 'send failed', provider: sent.provider, detail: sent.detail }, { status: 502 })
+      return NextResponse.json({ ok: true, provider: sent.provider })
+    }
+
+    // --- Wanted board: a new message in a reply's private chat. ---
+    if (type === 'wanted_message') {
+      if (!replyId) return NextResponse.json({ ok: false, error: 'missing replyId' }, { status: 400 })
+      const { data: rr } = await admin
+        .from('request_replies')
+        .select('id, responder_id, request:item_requests!request_id(id, title, requester_id)')
+        .eq('id', replyId)
+        .maybeSingle()
+      if (!rr || !rr.request) return NextResponse.json({ ok: false, error: 'not found' }, { status: 404 })
+
+      const requesterId = rr.request.requester_id
+      const responderId = rr.responder_id
+      // The caller must be one of the two participants.
+      if (user.id !== requesterId && user.id !== responderId) {
+        return NextResponse.json({ ok: false, error: 'forbidden' }, { status: 403 })
+      }
+      const recipientId = user.id === requesterId ? responderId : requesterId
+
+      // Collapse bursts: if the recipient already has unread messages here, they
+      // were emailed once and haven't opened yet — don't email again.
+      const { count } = await admin
+        .from('request_messages')
+        .select('id', { count: 'exact', head: true })
+        .eq('reply_id', replyId)
+        .neq('sender_id', recipientId)
+        .is('read_at', null)
+      if ((count || 0) > 1) return NextResponse.json({ ok: true, skipped: 'already-unread' })
+
+      const { data: rp } = await admin
+        .from('profiles').select('notify_email, full_name').eq('id', recipientId).maybeSingle()
+      const to = rp?.notify_email
+      if (!to) return NextResponse.json({ ok: true, skipped: 'no-email' })
+
+      const reqTitle = rr.request.title || 'a Wanted post'
+      const html = emailHtml({
+        name: rp?.full_name,
+        intro: `You have a new message on folks about the Wanted post <strong>“${reqTitle}”</strong>. Open the app to reply and sort out the details.`,
+        link: `${SITE}/requests/${rr.request.id}`,
+        cta: 'Read & reply',
+      })
+      const sent = await sendEmail({ to, subject: `New message about “${reqTitle}”`, html, name: rp?.full_name })
       if (sent.skipped) return NextResponse.json({ ok: true, skipped: sent.skipped })
       if (!sent.ok) return NextResponse.json({ ok: false, error: 'send failed', provider: sent.provider, detail: sent.detail }, { status: 502 })
       return NextResponse.json({ ok: true, provider: sent.provider })

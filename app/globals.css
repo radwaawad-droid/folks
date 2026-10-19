@@ -321,6 +321,15 @@ a{color:inherit;text-decoration:none}
   background:var(--coral);color:#fff;font-size:11px;font-weight:700;display:flex;align-items:center;justify-content:center;
   font-family:'DM Sans',sans-serif;box-shadow:0 0 0 2px var(--paper)}
 .nav-badge-dot{top:-4px;right:-4px}
+.nav-dot{position:absolute;top:-3px;right:-8px;width:9px;height:9px;border-radius:50%;
+  background:var(--coral);box-shadow:0 0 0 2px var(--paper)}
+.tab .nav-dot{top:0;right:50%;margin-right:-16px}
+
+/* ---------- wanted: offers + private boards ---------- */
+.offers{margin-top:22px}
+.offer-card{background:#fff;border:1px solid var(--line);border-radius:16px;padding:16px;margin-bottom:14px}
+.offer-head{display:flex;gap:12px;align-items:flex-start}
+.offer-card .chat-inline{border-top:1px solid var(--line);padding-top:12px}
 
 /* ---------- avatars as images ---------- */
 .avatar-img{object-fit:cover}

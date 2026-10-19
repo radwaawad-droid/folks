@@ -11,6 +11,12 @@ export default async function RequestsPage() {
   const cats = await fetchCategories(supabase)
   const CAT_EMOJI = Object.fromEntries(cats.map((c) => [c.key, c.emoji]))
 
+  // Opening the board clears the "new requests" dot in the nav.
+  if (user) {
+    await supabase.from('profiles')
+      .update({ wanted_seen_at: new Date().toISOString() }).eq('id', user.id)
+  }
+
   const { data: requests = [] } = await supabase
     .from('item_requests')
     .select('*, requester:profiles!requester_id(full_name, sub_area), replies:request_replies(id)')

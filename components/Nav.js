@@ -11,15 +11,26 @@ export default async function Nav() {
   let isAdmin = false
   let pendingRequests = 0
   let unreadMessages = 0
+  let wantedNew = false
 
   if (user) {
     const { data: profile } = await supabase
-      .from('profiles').select('full_name, avatar_url, banned, is_admin').eq('id', user.id).maybeSingle()
+      .from('profiles').select('full_name, avatar_url, banned, is_admin, wanted_seen_at').eq('id', user.id).maybeSingle()
     // Banned members are signed out of the app everywhere Nav renders.
     if (profile?.banned) redirect('/suspended')
     initial = (profile?.full_name || 'Y').charAt(0).toUpperCase()
     avatarUrl = profile?.avatar_url || null
     isAdmin = !!profile?.is_admin
+
+    // Dot on the Wanted icon when a neighbour has posted a request the member
+    // hasn't seen yet (not their own). Clears when they open /requests.
+    const { count: newWanted } = await supabase
+      .from('item_requests')
+      .select('id', { count: 'exact', head: true })
+      .eq('status', 'open')
+      .neq('requester_id', user.id)
+      .gt('created_at', profile?.wanted_seen_at || '1970-01-01T00:00:00Z')
+    wantedNew = (newWanted || 0) > 0
 
     const { count: reqCount } = await supabase
       .from('bookings')
@@ -60,7 +71,10 @@ export default async function Nav() {
           {user ? (
             <>
               {/* desktop-only text links */}
-              <Link href="/requests" className="nav-link nav-desktop">Wanted</Link>
+              <Link href="/requests" className="nav-link nav-badge-wrap nav-desktop">
+                Wanted
+                {wantedNew && <span className="nav-dot" />}
+              </Link>
               <Link href="/messages" className="nav-link nav-badge-wrap nav-desktop">
                 Messages
                 {unreadMessages > 0 && <span className="nav-badge">{unreadMessages}</span>}
@@ -82,9 +96,10 @@ export default async function Nav() {
             <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2"><path d="M3 10.5 12 3l9 7.5"/><path d="M5 9.5V21h14V9.5"/></svg>
             <span>Browse</span>
           </Link>
-          <Link href="/requests" className="tab">
+          <Link href="/requests" className="tab nav-badge-wrap">
             <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"><path d="M4 10v4a1 1 0 0 0 1 1h2l8 4V5L7 10H5a1 1 0 0 0-1 1z"/><path d="M17 8.5a4.5 4.5 0 0 1 0 7"/></svg>
             <span>Wanted</span>
+            {wantedNew && <span className="nav-dot" />}
           </Link>
           <Link href="/list" className="tab tab-add">
             <span className="tab-plus">＋</span>
