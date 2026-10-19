@@ -22,6 +22,7 @@ export default function ListItemForm({ communityId }) {
   const [description, setDescription] = useState('')
   const [isFree, setIsFree] = useState(true)
   const [fee, setFee] = useState('')
+  const [deposit, setDeposit] = useState('')
   const [pendingFile, setPendingFile] = useState(null) // file waiting to be cropped
   const [photo, setPhoto] = useState('')              // final cropped data URL
   const [loading, setLoading] = useState(false)
@@ -47,6 +48,7 @@ export default function ListItemForm({ communityId }) {
       photos,
       is_free: isFree,
       fee_per_day: isFree ? 0 : Number(fee || 0),
+      deposit: Number(deposit || 0),
       status: 'available',
     })
 
@@ -94,6 +96,13 @@ export default function ListItemForm({ communityId }) {
           <input className="input" style={{ marginTop: 10 }} type="number" min="0"
             value={fee} onChange={(e) => setFee(e.target.value)} placeholder="AED per day" />
         )}
+      </div>
+
+      <div className="field">
+        <label className="label">Refundable deposit <span style={{fontWeight:500,color:'var(--muted)'}}>(optional)</span></label>
+        <input className="input" type="number" min="0"
+          value={deposit} onChange={(e) => setDeposit(e.target.value)} placeholder="e.g. 100 — leave blank for none" />
+        <div className="hint">A security amount the borrower leaves and gets back when they return the item safely. Handed over and returned between you — folks doesn’t hold payments.</div>
       </div>
 
       <div className="field">

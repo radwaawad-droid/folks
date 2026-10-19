@@ -9,6 +9,7 @@ export default function OwnerControls({ item }) {
   const [description, setDescription] = useState(item.description || '')
   const [isFree, setIsFree] = useState(item.is_free)
   const [fee, setFee] = useState(item.fee_per_day || '')
+  const [deposit, setDeposit] = useState(item.deposit || '')
   const [file, setFile] = useState(null)
   const [status, setStatus] = useState(item.status || 'available')
   const [loading, setLoading] = useState(false)
@@ -40,6 +41,7 @@ export default function OwnerControls({ item }) {
       description,
       is_free: isFree,
       fee_per_day: isFree ? 0 : Number(fee || 0),
+      deposit: Number(deposit || 0),
       photos,
     }).eq('id', item.id)
 
@@ -94,6 +96,10 @@ export default function OwnerControls({ item }) {
         <input className="input" style={{ marginTop: 10 }} type="number" min="0"
           value={fee} onChange={(e) => setFee(e.target.value)} placeholder="AED per day" />
       )}
+
+      <label className="label" style={{ marginTop: 14 }}>Refundable deposit <span style={{fontWeight:500,color:'var(--muted)'}}>(optional)</span></label>
+      <input className="input" type="number" min="0"
+        value={deposit} onChange={(e) => setDeposit(e.target.value)} placeholder="e.g. 100 — leave blank for none" />
 
       <label className="label" style={{ marginTop: 14 }}>Replace photo <span style={{fontWeight:500,color:'var(--muted)'}}>(optional)</span></label>
       <input className="input" type="file" accept="image/*" onChange={(e) => setFile(e.target.files?.[0] || null)} />

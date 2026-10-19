@@ -414,3 +414,8 @@ a{color:inherit;text-decoration:none}
 .authtabs .segb{flex:1;text-align:center;padding:10px;border-radius:9px;font-weight:700;font-size:14px;
   color:var(--muted);background:transparent;border:none}
 .authtabs .segb.on{background:#fff;color:var(--green);box-shadow:0 1px 3px rgba(0,0,0,.08)}
+
+/* refundable deposit note on item page */
+.deposit-note{margin:8px 0 2px;background:var(--green-soft);border-radius:12px;padding:10px 12px}
+.deposit-amt{display:block;font-family:'Fraunces',Georgia,serif;font-weight:700;font-size:14px;color:var(--green)}
+.deposit-note small{color:var(--muted);font-size:11.5px;line-height:1.4;display:block;margin-top:3px}

@@ -116,6 +116,13 @@ export default async function ItemPage({ params }) {
               {!item.is_free && <small> /day</small>}
             </div>
 
+            {item.deposit > 0 && (
+              <div className="deposit-note">
+                <span className="deposit-amt">+ AED {item.deposit} refundable deposit</span>
+                <small>Left with the owner and returned to you when you give the item back safely.</small>
+              </div>
+            )}
+
             <div className="lendcard">
               <span className="avatar">{initial}</span>
               <div>
@@ -135,7 +142,7 @@ export default async function ItemPage({ params }) {
             {!isSample && user && user.id === item.owner_id ? (
               <OwnerControls item={{
                 id: item.id, title: item.title, description: item.description,
-                is_free: item.is_free, fee_per_day: item.fee_per_day,
+                is_free: item.is_free, fee_per_day: item.fee_per_day, deposit: item.deposit,
                 photos: item.photos || [], status: item.status,
               }} />
             ) : (
