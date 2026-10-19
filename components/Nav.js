@@ -77,7 +77,7 @@ export default async function Nav() {
             <span>Browse</span>
           </Link>
           <Link href="/requests" className="tab">
-            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2"><circle cx="11" cy="11" r="7"/><path d="m21 21-4-4"/></svg>
+            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"><path d="M4 10v4a1 1 0 0 0 1 1h2l8 4V5L7 10H5a1 1 0 0 0-1 1z"/><path d="M17 8.5a4.5 4.5 0 0 1 0 7"/></svg>
             <span>Wanted</span>
           </Link>
           <Link href="/list" className="tab tab-add">
