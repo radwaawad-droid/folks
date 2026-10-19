@@ -24,8 +24,9 @@ export default function ListItemForm({ communityId }) {
   const [fee, setFee] = useState('')
   const [deposit, setDeposit] = useState('')
   const [pendingFile, setPendingFile] = useState(null) // file waiting to be cropped
-  const [photo, setPhoto] = useState('')              // final cropped data URL
+  const [photos, setPhotos] = useState([])            // final cropped data URLs
   const [loading, setLoading] = useState(false)
+  const MAX_PHOTOS = 5
   const [error, setError] = useState('')
   const [note, setNote] = useState('')
 
@@ -36,16 +37,13 @@ export default function ListItemForm({ communityId }) {
     const { data: { user } } = await supabase.auth.getUser()
     if (!user) { window.location.href = '/'; return }
 
-    // The cropper already produced a compact square JPEG data URL — store it directly.
-    const photos = photo ? [photo] : []
-
     const { error: dbErr } = await supabase.from('items').insert({
       owner_id: user.id,
       community_id: communityId,
       title,
       description,
       category,
-      photos,
+      photos, // array of cropped square JPEG data URLs; first is the cover
       is_free: isFree,
       fee_per_day: isFree ? 0 : Number(fee || 0),
       deposit: Number(deposit || 0),
@@ -106,29 +104,27 @@ export default function ListItemForm({ communityId }) {
       </div>
 
       <div className="field">
-        <label className="label">Photo <span style={{fontWeight:500,color:'var(--muted)'}}>(optional)</span></label>
+        <label className="label">Photos <span style={{fontWeight:500,color:'var(--muted)'}}>(up to {MAX_PHOTOS}, optional)</span></label>
 
-        {photo ? (
-          <div className="photo-pick">
-            <img className="photo-thumb" src={photo} alt="Your photo" />
-            <div className="photo-pick-actions">
-              <label className="photo-btn ghost">
-                Change
-                <input type="file" accept="image/*" hidden
-                  onChange={(e) => { setPendingFile(e.target.files?.[0] || null); e.target.value = '' }} />
-              </label>
-              <button type="button" className="photo-btn ghost" onClick={() => setPhoto('')}>Remove</button>
+        <div className="photo-grid">
+          {photos.map((src, i) => (
+            <div className="photo-tile" key={i}>
+              <img src={src} alt="" />
+              {i === 0 && <span className="cover-tag">Cover</span>}
+              <button type="button" className="photo-x" aria-label="Remove"
+                onClick={() => setPhotos(photos.filter((_, j) => j !== i))}>×</button>
             </div>
-          </div>
-        ) : (
-          <label className="photo-drop">
-            <span className="photo-drop-plus">＋</span>
-            <span>Add a photo</span>
-            <input type="file" accept="image/*" hidden
-              onChange={(e) => { setPendingFile(e.target.files?.[0] || null); e.target.value = '' }} />
-          </label>
-        )}
-        <div className="hint">A clear photo gets borrowed faster. You can crop and zoom it next.</div>
+          ))}
+          {photos.length < MAX_PHOTOS && (
+            <label className="photo-add">
+              <span className="photo-add-plus">＋</span>
+              <span>Add</span>
+              <input type="file" accept="image/*" hidden
+                onChange={(e) => { setPendingFile(e.target.files?.[0] || null); e.target.value = '' }} />
+            </label>
+          )}
+        </div>
+        <div className="hint">The first photo is the cover. You can crop &amp; zoom each one.</div>
       </div>
 
       <button className="btn full" disabled={loading}>
@@ -138,21 +134,24 @@ export default function ListItemForm({ communityId }) {
       {pendingFile && (
         <ImageCropper
           file={pendingFile}
-          onDone={(dataUrl) => { setPhoto(dataUrl); setPendingFile(null) }}
+          onDone={(dataUrl) => { setPhotos((p) => [...p, dataUrl].slice(0, MAX_PHOTOS)); setPendingFile(null) }}
           onCancel={() => setPendingFile(null)}
         />
       )}
 
       <style jsx>{`
-        .photo-drop{display:flex;flex-direction:column;align-items:center;justify-content:center;gap:6px;
-          padding:26px;border:1.5px dashed #CDBFA8;border-radius:16px;background:#fff;cursor:pointer;
-          color:#6B7770;font-weight:600;font-size:14px}
-        .photo-drop-plus{font-size:30px;line-height:1;color:#F2774E;font-weight:700}
-        .photo-pick{display:flex;align-items:center;gap:14px}
-        .photo-thumb{width:96px;height:96px;object-fit:cover;border-radius:14px;border:1px solid #ECE6DB}
-        .photo-pick-actions{display:flex;flex-direction:column;gap:8px}
-        .photo-btn{background:#fff;color:#205C49;border:1.5px solid #205C49;border-radius:12px;
-          padding:9px 16px;font-weight:700;font-size:14px;cursor:pointer;text-align:center}
+        .photo-grid{display:flex;flex-wrap:wrap;gap:10px}
+        .photo-tile{position:relative;width:92px;height:92px;border-radius:14px;overflow:hidden;border:1px solid #ECE6DB;background:#fff}
+        .photo-tile img{width:100%;height:100%;object-fit:cover;display:block}
+        .cover-tag{position:absolute;left:5px;bottom:5px;background:rgba(32,92,73,.9);color:#fff;
+          font-size:9.5px;font-weight:700;padding:2px 6px;border-radius:999px}
+        .photo-x{position:absolute;top:4px;right:4px;width:22px;height:22px;border-radius:50%;border:none;
+          background:rgba(0,0,0,.55);color:#fff;font-size:15px;line-height:1;cursor:pointer;display:flex;
+          align-items:center;justify-content:center}
+        .photo-add{display:flex;flex-direction:column;align-items:center;justify-content:center;gap:2px;
+          width:92px;height:92px;border:1.5px dashed #CDBFA8;border-radius:14px;background:#fff;cursor:pointer;
+          color:#6B7770;font-weight:600;font-size:12px}
+        .photo-add-plus{font-size:24px;line-height:1;color:#F2774E;font-weight:700}
       `}</style>
     </form>
   )

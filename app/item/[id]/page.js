@@ -2,6 +2,7 @@ import Link from 'next/link'
 import Nav from '@/components/Nav'
 import RequestForm from '@/components/RequestForm'
 import OwnerControls from '@/components/OwnerControls'
+import Gallery from '@/components/Gallery'
 import { createClient } from '@/utils/supabase/server'
 import { sampleById } from '@/lib/sample'
 
@@ -79,7 +80,7 @@ export default async function ItemPage({ params }) {
         <div className="detail">
           <div>
             {Array.isArray(item.photos) && item.photos.length ? (
-              <div className="detail-hero withimg"><img className="ph-img" src={item.photos[0]} alt={item.title} /></div>
+              <Gallery photos={item.photos} alt={item.title} />
             ) : (
               <div className={`detail-hero ${meta.cls}`}>{item.emoji || meta.emoji}</div>
             )}
