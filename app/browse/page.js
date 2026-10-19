@@ -2,12 +2,14 @@ import Nav from '@/components/Nav'
 import BrowseGrid from '@/components/BrowseGrid'
 import { createClient } from '@/utils/supabase/server'
 import { SAMPLE } from '@/lib/sample'
+import { fetchCategories } from '@/lib/categories'
 
 export const dynamic = 'force-dynamic'
 
 export default async function BrowsePage() {
   const supabase = createClient()
   const { data: { user } } = await supabase.auth.getUser()
+  const categories = await fetchCategories(supabase)
 
   let items = []
   let usingSample = false
@@ -36,7 +38,7 @@ export default async function BrowsePage() {
             Showing sample items. Real listings from neighbours appear here automatically.
           </div>
         )}
-        <BrowseGrid items={items} />
+        <BrowseGrid items={items} categories={categories} />
       </main>
     </>
   )

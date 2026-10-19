@@ -1,6 +1,7 @@
 import { NextResponse } from 'next/server'
 import { createClient } from '@/utils/supabase/server'
 import { createAdminClient } from '@/utils/supabase/admin'
+import { slugify } from '@/lib/categories'
 
 export const runtime = 'nodejs'
 export const dynamic = 'force-dynamic'
@@ -20,7 +21,8 @@ async function requireAdmin() {
 
 export async function POST(req) {
   try {
-    const { action, itemId, userId } = await req.json()
+    const body = await req.json()
+    const { action, itemId, userId } = body
     const gate = await requireAdmin()
     if (gate.error) return NextResponse.json({ ok: false, error: gate.error }, { status: gate.status })
     const { admin, user } = gate
@@ -49,6 +51,25 @@ export async function POST(req) {
         // Remove their listings from the community immediately.
         await admin.from('items').delete().eq('owner_id', userId)
       }
+      return NextResponse.json({ ok: true })
+    }
+
+    if (action === 'add_category') {
+      const label = (body.label || '').trim()
+      const key = slugify(label)
+      if (!label || !key) return NextResponse.json({ ok: false, error: 'Enter a category name.' }, { status: 400 })
+      const emoji = (body.emoji || '').trim() || '📦'
+      const { data: top } = await admin.from('categories').select('sort').order('sort', { ascending: false }).limit(1).maybeSingle()
+      const sort = (top?.sort || 0) + 1
+      const { error } = await admin.from('categories').insert({ key, label, emoji, sort })
+      if (error) return NextResponse.json({ ok: false, error: 'That category already exists (or the name is taken).' }, { status: 400 })
+      return NextResponse.json({ ok: true })
+    }
+
+    if (action === 'delete_category') {
+      if (!body.key) return NextResponse.json({ ok: false, error: 'missing key' }, { status: 400 })
+      const { error } = await admin.from('categories').delete().eq('key', body.key)
+      if (error) throw error
       return NextResponse.json({ ok: true })
     }
 

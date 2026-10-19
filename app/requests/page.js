@@ -1,14 +1,15 @@
 import Link from 'next/link'
 import Nav from '@/components/Nav'
 import { createClient } from '@/utils/supabase/server'
+import { fetchCategories } from '@/lib/categories'
 
 export const dynamic = 'force-dynamic'
-
-const CAT_EMOJI = { tools:'🔧', sports:'⚽', party:'🎉', garden:'🌿', electronics:'🔌', toys:'🧸', pets:'🐾', bbq:'🍖' }
 
 export default async function RequestsPage() {
   const supabase = createClient()
   const { data: { user } } = await supabase.auth.getUser()
+  const cats = await fetchCategories(supabase)
+  const CAT_EMOJI = Object.fromEntries(cats.map((c) => [c.key, c.emoji]))
 
   const { data: requests = [] } = await supabase
     .from('item_requests')

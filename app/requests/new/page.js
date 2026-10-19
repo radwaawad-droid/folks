@@ -2,6 +2,7 @@ import { redirect } from 'next/navigation'
 import Nav from '@/components/Nav'
 import NewRequestForm from '@/components/NewRequestForm'
 import { createClient } from '@/utils/supabase/server'
+import { fetchCategories } from '@/lib/categories'
 
 export const dynamic = 'force-dynamic'
 
@@ -20,6 +21,8 @@ export default async function NewRequestPage() {
     communityId = c?.id || null
   }
 
+  const categories = await fetchCategories(supabase)
+
   return (
     <>
       <Nav />
@@ -27,7 +30,7 @@ export default async function NewRequestPage() {
         <a href="/requests" className="linkish">← Back to wanted</a>
         <h1 className="sec-title" style={{ marginTop: 12 }}>Post a request</h1>
         <p className="muted-sub">Tell neighbours what you’re looking for — they’ll reply if they have it.</p>
-        <NewRequestForm communityId={communityId} />
+        <NewRequestForm communityId={communityId} categories={categories} />
       </main>
     </>
   )

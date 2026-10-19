@@ -2,6 +2,7 @@ import { redirect } from 'next/navigation'
 import Nav from '@/components/Nav'
 import ListItemForm from '@/components/ListItemForm'
 import { createClient } from '@/utils/supabase/server'
+import { fetchCategories } from '@/lib/categories'
 
 export const dynamic = 'force-dynamic'
 
@@ -20,13 +21,15 @@ export default async function ListPage() {
     communityId = c?.id || null
   }
 
+  const categories = await fetchCategories(supabase)
+
   return (
     <>
       <Nav />
       <main className="container page">
         <h1 className="browse-head" style={{ marginBottom: 6 }}>List an item</h1>
         <p className="muted-sub">Share something useful with your neighbours — it takes about a minute.</p>
-        <ListItemForm communityId={communityId} />
+        <ListItemForm communityId={communityId} categories={categories} />
       </main>
     </>
   )

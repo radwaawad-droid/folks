@@ -26,6 +26,9 @@ export default async function AdminPage() {
     .select('id, full_name, username, sub_area, notify_email, banned, is_admin, created_at')
     .order('created_at', { ascending: false })
 
+  const { data: categories = [] } = await admin
+    .from('categories').select('key, label, emoji, sort').order('sort')
+
   const counts = {}
   ;(items || []).forEach((it) => { const o = it.owner?.id; if (o) counts[o] = (counts[o] || 0) + 1 })
 
@@ -40,6 +43,7 @@ export default async function AdminPage() {
         <AdminPanel
           items={items || []}
           profiles={profiles || []}
+          categories={categories || []}
           counts={counts}
           meId={user.id}
         />

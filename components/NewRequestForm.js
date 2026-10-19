@@ -2,22 +2,13 @@
 
 import { useState } from 'react'
 import { createClient } from '@/utils/supabase/client'
+import { DEFAULT_CATEGORIES } from '@/lib/categories'
 
-const CATEGORIES = [
-  { key: 'tools', label: 'Tools' },
-  { key: 'sports', label: 'Sports' },
-  { key: 'party', label: 'Party & Events' },
-  { key: 'garden', label: 'Lawn & Garden' },
-  { key: 'electronics', label: 'Electronics' },
-  { key: 'toys', label: 'Toys & Games' },
-  { key: 'pets', label: 'Pet Supplies' },
-  { key: 'bbq', label: 'BBQ' },
-]
-
-export default function NewRequestForm({ communityId }) {
+export default function NewRequestForm({ communityId, categories }) {
   const supabase = createClient()
+  const CATEGORIES = (categories && categories.length) ? categories : DEFAULT_CATEGORIES
   const [title, setTitle] = useState('')
-  const [category, setCategory] = useState('tools')
+  const [category, setCategory] = useState(CATEGORIES[0]?.key || 'tools')
   const [description, setDescription] = useState('')
   const [days, setDays] = useState('')
   const [loading, setLoading] = useState(false)

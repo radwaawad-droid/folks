@@ -7,11 +7,13 @@ function fmtDate(d) {
   catch { return '' }
 }
 
-export default function AdminPanel({ items, profiles, counts, meId }) {
+export default function AdminPanel({ items, profiles, categories = [], counts, meId }) {
   const [tab, setTab] = useState('listings')
   const [busy, setBusy] = useState(null)
   const [err, setErr] = useState('')
   const [q, setQ] = useState('')
+  const [newLabel, setNewLabel] = useState('')
+  const [newEmoji, setNewEmoji] = useState('')
 
   async function call(payload, confirmMsg) {
     if (confirmMsg && !window.confirm(confirmMsg)) return
@@ -36,17 +38,22 @@ export default function AdminPanel({ items, profiles, counts, meId }) {
 
   return (
     <div>
-      <div className="seg" style={{ maxWidth: 360, marginBottom: 16 }}>
+      <div className="seg" style={{ maxWidth: 520, marginBottom: 16 }}>
         <span className={`segb ${tab === 'listings' ? 'on' : ''}`} onClick={() => setTab('listings')}>
           Listings ({items.length})
         </span>
         <span className={`segb ${tab === 'members' ? 'on' : ''}`} onClick={() => setTab('members')}>
           Members ({profiles.length})
         </span>
+        <span className={`segb ${tab === 'categories' ? 'on' : ''}`} onClick={() => setTab('categories')}>
+          Categories ({categories.length})
+        </span>
       </div>
 
-      <input className="input" placeholder="Search…" value={q} onChange={(e) => setQ(e.target.value)}
-        style={{ marginBottom: 16 }} />
+      {tab !== 'categories' && (
+        <input className="input" placeholder="Search…" value={q} onChange={(e) => setQ(e.target.value)}
+          style={{ marginBottom: 16 }} />
+      )}
 
       {err && <div className="err" style={{ marginBottom: 14 }}>{err}</div>}
 
@@ -120,7 +127,46 @@ export default function AdminPanel({ items, profiles, counts, meId }) {
         </div>
       )}
 
+      {tab === 'categories' && (
+        <div>
+          <form className="cat-add" onSubmit={(e) => {
+            e.preventDefault()
+            const label = newLabel.trim()
+            if (!label) return
+            call({ action: 'add_category', label, emoji: newEmoji.trim() })
+          }}>
+            <input className="input" placeholder="New category (e.g. Books)" value={newLabel}
+              onChange={(e) => setNewLabel(e.target.value)} />
+            <input className="input cat-emoji-in" placeholder="icon" value={newEmoji} maxLength={4}
+              onChange={(e) => setNewEmoji(e.target.value)} />
+            <button className="btn sm" disabled={!newLabel.trim() || !!busy}>Add</button>
+          </form>
+
+          <div className="rows">
+            {categories.length === 0 && <div className="empty">No categories yet.</div>}
+            {categories.map((c) => {
+              const payload = { action: 'delete_category', key: c.key }
+              return (
+                <div className="row admin-row" key={c.key}>
+                  <div className="admin-thumb"><span style={{ fontSize: 20 }}>{c.emoji || '📦'}</span></div>
+                  <div className="row-main">
+                    <b>{c.label}</b>
+                    <small>{c.key}</small>
+                  </div>
+                  <button className="btn sm danger" disabled={busy === JSON.stringify(payload)}
+                    onClick={() => call(payload, `Delete the “${c.label}” category? Existing listings keep their tag, but it stops appearing as a filter.`)}>
+                    Delete
+                  </button>
+                </div>
+              )
+            })}
+          </div>
+        </div>
+      )}
+
       <style jsx>{`
+        .cat-add{display:flex;gap:8px;margin-bottom:16px}
+        .cat-emoji-in{max-width:76px;text-align:center}
         .admin-row{display:flex;align-items:center;gap:12px}
         .admin-thumb{width:46px;height:46px;border-radius:10px;overflow:hidden;background:#fff;border:1px solid var(--line);
           flex:0 0 auto;display:flex;align-items:center;justify-content:center;color:var(--muted)}

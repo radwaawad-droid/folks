@@ -2,25 +2,19 @@
 
 import { useState } from 'react'
 import ItemCard from '@/components/ItemCard'
+import { DEFAULT_CATEGORIES } from '@/lib/categories'
 
-// Each filter maps to the item categories it should include.
-const FILTERS = [
-  { key: 'all',         label: 'All',             cats: null },
-  { key: 'tools',       label: 'Tools',           cats: ['tools'] },
-  { key: 'sports',      label: 'Sports',          cats: ['sports'] },
-  { key: 'party',       label: 'Party & Events',  cats: ['party'] },
-  { key: 'garden',      label: 'Lawn & Garden',   cats: ['garden'] },
-  { key: 'electronics', label: 'Electronics',     cats: ['electronics'] },
-  { key: 'toys',        label: 'Toys & Games',    cats: ['toys'] },
-  { key: 'pets',        label: 'Pet Supplies',    cats: ['pets'] },
-  { key: 'bbq',         label: 'BBQ',             cats: ['bbq'] },
-]
+export default function BrowseGrid({ items, categories }) {
+  const cats = (categories && categories.length) ? categories : DEFAULT_CATEGORIES
+  const FILTERS = [
+    { key: 'all', label: 'All', cats: null },
+    ...cats.map((c) => ({ key: c.key, label: c.label, cats: [c.key] })),
+  ]
 
-export default function BrowseGrid({ items }) {
   const [active, setActive] = useState('all')
   const [q, setQ] = useState('')
 
-  const filter = FILTERS.find((f) => f.key === active)
+  const filter = FILTERS.find((f) => f.key === active) || FILTERS[0]
   const term = q.trim().toLowerCase()
 
   const shown = items.filter((i) => {

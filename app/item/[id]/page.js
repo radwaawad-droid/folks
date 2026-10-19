@@ -5,24 +5,16 @@ import OwnerControls from '@/components/OwnerControls'
 import Gallery from '@/components/Gallery'
 import { createClient } from '@/utils/supabase/server'
 import { sampleById } from '@/lib/sample'
+import { fetchCategories, clsFor } from '@/lib/categories'
 
 export const dynamic = 'force-dynamic'
-
-const CATEGORY_META = {
-  tools:       { emoji: '🔧', cls: 'ph-tools', label: 'Tools' },
-  sports:      { emoji: '⚽', cls: 'ph-camp', label: 'Sports' },
-  party:       { emoji: '🎉', cls: 'ph-party', label: 'Party & Events' },
-  garden:      { emoji: '🌿', cls: 'ph-camp', label: 'Lawn & Garden' },
-  electronics: { emoji: '🔌', cls: 'ph-default', label: 'Electronics' },
-  toys:        { emoji: '🧸', cls: 'ph-baby', label: 'Toys & Games' },
-  pets:        { emoji: '🐾', cls: 'ph-default', label: 'Pet Supplies' },
-  bbq:         { emoji: '🍖', cls: 'ph-party', label: 'BBQ' },
-}
 
 export default async function ItemPage({ params }) {
   const supabase = createClient()
   const { id } = params
   const { data: { user } } = await supabase.auth.getUser()
+  const categories = await fetchCategories(supabase)
+  const catMap = Object.fromEntries(categories.map((c) => [c.key, c]))
 
   let item = null
   let isSample = false
@@ -55,7 +47,8 @@ export default async function ItemPage({ params }) {
     )
   }
 
-  const meta = CATEGORY_META[item.category] || { emoji: '📦', cls: 'ph-default', label: 'Item' }
+  const cat = catMap[item.category] || {}
+  const meta = { label: cat.label || item.category || 'Item', emoji: cat.emoji || '📦', cls: clsFor(item.category) }
   const owner = item.owner || {}
   const initial = (owner.full_name || 'N').charAt(0)
 
