@@ -5,14 +5,14 @@ import { createClient } from '@/utils/supabase/client'
 import ImageCropper from '@/components/ImageCropper'
 
 const CATEGORIES = [
-  { key: 'tools', label: '🔧 Tools & DIY' },
-  { key: 'baby', label: '👶 Baby & Kids' },
-  { key: 'party', label: '🎉 Party' },
-  { key: 'bbq', label: '🍖 BBQ' },
-  { key: 'camping', label: '🏕️ Camping' },
-  { key: 'sports', label: '⚽ Sports' },
-  { key: 'kitchen', label: '🍳 Kitchen' },
-  { key: 'garden', label: '🌿 Garden' },
+  { key: 'tools', label: 'Tools & DIY' },
+  { key: 'baby', label: 'Baby & Kids' },
+  { key: 'party', label: 'Party' },
+  { key: 'bbq', label: 'BBQ' },
+  { key: 'camping', label: 'Camping' },
+  { key: 'sports', label: 'Sports' },
+  { key: 'kitchen', label: 'Kitchen' },
+  { key: 'garden', label: 'Garden' },
 ]
 
 export default function ListItemForm({ communityId }) {

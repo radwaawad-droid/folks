@@ -4,14 +4,14 @@ import { useState } from 'react'
 import { createClient } from '@/utils/supabase/client'
 
 const CATEGORIES = [
-  { key: 'tools', label: '🔧 Tools & DIY' },
-  { key: 'baby', label: '👶 Baby & Kids' },
-  { key: 'party', label: '🎉 Party' },
-  { key: 'bbq', label: '🍖 BBQ' },
-  { key: 'camping', label: '🏕️ Camping' },
-  { key: 'sports', label: '⚽ Sports' },
-  { key: 'kitchen', label: '🍳 Kitchen' },
-  { key: 'garden', label: '🌿 Garden' },
+  { key: 'tools', label: 'Tools & DIY' },
+  { key: 'baby', label: 'Baby & Kids' },
+  { key: 'party', label: 'Party' },
+  { key: 'bbq', label: 'BBQ' },
+  { key: 'camping', label: 'Camping' },
+  { key: 'sports', label: 'Sports' },
+  { key: 'kitchen', label: 'Kitchen' },
+  { key: 'garden', label: 'Garden' },
 ]
 
 export default function NewRequestForm({ communityId }) {

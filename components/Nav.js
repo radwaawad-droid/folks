@@ -50,7 +50,7 @@ export default async function Nav() {
       <nav className="nav">
         <div className="container nav-inner">
           <Link href="/browse" className="logo">folks <span className="d" /></Link>
-          <span className="locpill">📍 Arabian Ranches</span>
+          <span className="locpill">Arabian Ranches</span>
           <div className="nav-spacer" />
           {user ? (
             <>

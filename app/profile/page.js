@@ -73,7 +73,7 @@ export default async function ProfilePage() {
               </div>
               <div className="badges" style={{ marginTop: 10 }}>
                 <span className="badge">✓ Verified neighbour</span>
-                <span className="badge">🏡 Arabian Ranches resident</span>
+                <span className="badge">Arabian Ranches resident</span>
               </div>
             </div>
             <div className="pcard-actions">

@@ -69,7 +69,7 @@ export default function ChatThread({ bookingId, meId, initial }) {
     <div className="chat">
       <div className="chat-body">
         {messages.length === 0 && (
-          <div className="chat-empty">Say hello 👋 and arrange a pickup.</div>
+          <div className="chat-empty">Say hello and arrange a pickup.</div>
         )}
         {messages.map((m) => (
           <div key={m.id} className={`bub ${m.sender_id === meId ? 'me' : 'them'}`}>

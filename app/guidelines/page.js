@@ -25,7 +25,6 @@ const h2 = {
   gap: 10,
 }
 const li = { margin: '7px 0', lineHeight: 1.55 }
-const emoji = { fontSize: 22 }
 
 export default function GuidelinesPage() {
   return (
@@ -39,7 +38,7 @@ export default function GuidelinesPage() {
         </p>
 
         <section style={card}>
-          <h2 style={h2}><span style={emoji}>🤝</span> The folks spirit</h2>
+          <h2 style={h2}>The folks spirit</h2>
           <ul style={{ paddingLeft: 20, margin: 0 }}>
             <li style={li}>Treat neighbours the way you&apos;d want to be treated — with honesty and respect.</li>
             <li style={li}>folks is for real Arabian Ranches residents sharing everyday things, not for running a business.</li>
@@ -48,7 +47,7 @@ export default function GuidelinesPage() {
         </section>
 
         <section style={card}>
-          <h2 style={h2}><span style={emoji}>📦</span> When you borrow</h2>
+          <h2 style={h2}>When you borrow</h2>
           <ul style={{ paddingLeft: 20, margin: 0 }}>
             <li style={li}>Treat your neighbour&apos;s things with care — as if they were your own.</li>
             <li style={li}>Return items <strong>on time</strong> and in the <strong>same condition</strong> you received them.</li>
@@ -58,7 +57,7 @@ export default function GuidelinesPage() {
         </section>
 
         <section style={card}>
-          <h2 style={h2}><span style={emoji}>🔑</span> When you lend</h2>
+          <h2 style={h2}>When you lend</h2>
           <ul style={{ paddingLeft: 20, margin: 0 }}>
             <li style={li}>Be honest about the item&apos;s condition and how it works.</li>
             <li style={li}>Only lend things that are safe and in good working order.</li>
@@ -68,7 +67,7 @@ export default function GuidelinesPage() {
         </section>
 
         <section style={card}>
-          <h2 style={h2}><span style={emoji}>💬</span> Handoff &amp; pickup</h2>
+          <h2 style={h2}>Handoff &amp; pickup</h2>
           <ul style={{ paddingLeft: 20, margin: 0 }}>
             <li style={li}>Arrange pickup and drop-off through folks chat so there&apos;s a record.</li>
             <li style={li}>Choose a time and spot you&apos;re both comfortable with.</li>
@@ -77,7 +76,7 @@ export default function GuidelinesPage() {
         </section>
 
         <section style={card}>
-          <h2 style={h2}><span style={emoji}>💵</span> Free &amp; paid borrowing</h2>
+          <h2 style={h2}>Free &amp; paid borrowing</h2>
           <ul style={{ paddingLeft: 20, margin: 0 }}>
             <li style={li}>Many items are free. Some owners set a small daily fee — that&apos;s shown on the listing.</li>
             <li style={li}>Any fee is arranged directly between neighbours. folks doesn&apos;t handle or hold payments.</li>
@@ -86,7 +85,7 @@ export default function GuidelinesPage() {
         </section>
 
         <section style={card}>
-          <h2 style={h2}><span style={emoji}>⭐</span> Reviews</h2>
+          <h2 style={h2}>Reviews</h2>
           <ul style={{ paddingLeft: 20, margin: 0 }}>
             <li style={li}>Leave an honest, fair review after each borrow — it builds trust for everyone.</li>
             <li style={li}>Be kind. A review is feedback, not a place to vent.</li>
@@ -94,7 +93,7 @@ export default function GuidelinesPage() {
         </section>
 
         <section style={card}>
-          <h2 style={h2}><span style={emoji}>🚫</span> Not allowed</h2>
+          <h2 style={h2}>Not allowed</h2>
           <ul style={{ paddingLeft: 20, margin: 0 }}>
             <li style={li}>Anything illegal, unsafe, or clearly dangerous.</li>
             <li style={li}>Harassment, dishonesty, or treating neighbours badly.</li>
@@ -106,7 +105,7 @@ export default function GuidelinesPage() {
         </section>
 
         <section style={{ ...card, background: '#F4F1E8' }}>
-          <h2 style={h2}><span style={emoji}>📄</span> The important bit</h2>
+          <h2 style={h2}>The important bit</h2>
           <p style={{ margin: '0 0 10px', lineHeight: 1.6, fontSize: 14, color: 'var(--ink)' }}>
             folks is a community platform that helps neighbours find and arrange borrowing. Any loan is an
             agreement <strong>directly between the two neighbours</strong> involved. folks isn&apos;t a party to

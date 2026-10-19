@@ -85,7 +85,7 @@ export default async function ItemPage({ params }) {
             )}
 
             <h1 className="detail-title">{item.title}</h1>
-            <div className="detail-sub">{meta.emoji} {meta.label}{owner.sub_area ? ` · ${owner.sub_area}` : ''}</div>
+            <div className="detail-sub">{meta.label}{owner.sub_area ? ` · ${owner.sub_area}` : ''}</div>
 
             <div className="dblock">
               <h3>About this item</h3>
@@ -136,7 +136,7 @@ export default async function ItemPage({ params }) {
 
             <div className="badges">
               <span className="badge">✓ Verified neighbour</span>
-              <span className="badge">🏡 Arabian Ranches resident</span>
+              <span className="badge">Arabian Ranches resident</span>
             </div>
 
             {!isSample && user && user.id === item.owner_id ? (
