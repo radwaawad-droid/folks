@@ -7,7 +7,7 @@ function fmtDate(d) {
   catch { return '' }
 }
 
-export default function AdminPanel({ items, profiles, categories = [], counts, meId }) {
+export default function AdminPanel({ items, profiles, categories = [], counts, stats = null, meId }) {
   const [tab, setTab] = useState('listings')
   const [busy, setBusy] = useState(null)
   const [err, setErr] = useState('')
@@ -36,8 +36,31 @@ export default function AdminPanel({ items, profiles, categories = [], counts, m
     ? profiles.filter((p) => `${p.full_name || ''} ${p.username || ''} ${p.notify_email || ''} ${p.sub_area || ''}`.toLowerCase().includes(ql))
     : profiles
 
+  const tiles = stats ? [
+    { label: 'Members', value: stats.members, sub: stats.membersNew ? `+${stats.membersNew} this week` : null },
+    { label: 'Active listings', value: stats.listingsActive, sub: stats.listingsNew ? `+${stats.listingsNew} this week` : null },
+    { label: 'Pending requests', value: stats.bookingsPending, sub: 'awaiting reply', accent: stats.bookingsPending > 0 },
+    { label: 'Active borrows', value: stats.bookingsActive, sub: 'out now' },
+    { label: 'Completed', value: stats.bookingsReturned, sub: 'returned safely' },
+    { label: 'Wanted open', value: stats.wantedOpen, sub: 'requests posted' },
+    { label: 'Reviews', value: stats.reviews, sub: 'left by neighbours' },
+    { label: 'Banned', value: stats.banned, sub: stats.banned > 0 ? 'suspended' : 'all clear', accent: stats.banned > 0 },
+  ] : []
+
   return (
     <div>
+      {stats && (
+        <div className="stat-grid">
+          {tiles.map((t) => (
+            <div className={`stat-tile ${t.accent ? 'accent' : ''}`} key={t.label}>
+              <div className="stat-num">{t.value}</div>
+              <div className="stat-lab">{t.label}</div>
+              {t.sub && <div className="stat-sub">{t.sub}</div>}
+            </div>
+          ))}
+        </div>
+      )}
+
       <div className="seg" style={{ maxWidth: 520, marginBottom: 16 }}>
         <span className={`segb ${tab === 'listings' ? 'on' : ''}`} onClick={() => setTab('listings')}>
           Listings ({items.length})
@@ -165,6 +188,15 @@ export default function AdminPanel({ items, profiles, categories = [], counts, m
       )}
 
       <style jsx>{`
+        .stat-grid{display:grid;grid-template-columns:repeat(4,1fr);gap:12px;margin-bottom:22px}
+        .stat-tile{background:#fff;border:1px solid var(--line);border-radius:14px;padding:16px 16px 14px}
+        .stat-tile.accent{border-color:var(--coral);background:#FFF6F1}
+        .stat-num{font-family:'Fraunces',Georgia,serif;font-weight:700;font-size:30px;line-height:1;color:var(--green)}
+        .stat-tile.accent .stat-num{color:var(--coral)}
+        .stat-lab{margin-top:8px;font-weight:700;font-size:13px;color:var(--ink,#2b2b2b)}
+        .stat-sub{margin-top:2px;font-size:11px;color:var(--muted)}
+        @media(max-width:720px){.stat-grid{grid-template-columns:repeat(2,1fr);gap:10px}
+          .stat-num{font-size:26px}}
         .cat-add{display:flex;gap:8px;margin-bottom:16px}
         .cat-emoji-in{max-width:76px;text-align:center}
         .admin-row{display:flex;align-items:center;gap:12px}
