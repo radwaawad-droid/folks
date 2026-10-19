@@ -146,6 +146,8 @@ export default async function ProfilePage() {
 
         <div style={{ textAlign: 'center', marginTop: 34, paddingTop: 20, borderTop: '1px solid var(--line-2)' }}>
           <a className="linkish" href="/guidelines">Community guidelines</a>
+          <span style={{ color: 'var(--muted)', margin: '0 10px' }}>·</span>
+          <a className="linkish" href="/feedback">Suggestions &amp; complaints</a>
         </div>
       </main>
     </>
