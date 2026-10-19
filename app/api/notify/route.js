@@ -57,8 +57,8 @@ function emailHtml({ name, intro, link, cta }) {
 
 export async function POST(req) {
   try {
-    const { type, bookingId } = await req.json()
-    if (!type || !bookingId) {
+    const { type, bookingId, requestId } = await req.json()
+    if (!type) {
       return NextResponse.json({ ok: false, error: 'missing fields' }, { status: 400 })
     }
 
@@ -67,8 +67,45 @@ export async function POST(req) {
     const { data: { user } } = await supabase.auth.getUser()
     if (!user) return NextResponse.json({ ok: false, error: 'unauthorized' }, { status: 401 })
 
-    // Look up the booking with the service-role client (so we can read private emails).
     const admin = createAdminClient()
+
+    // --- Wanted board: someone replied to a neighbour's request. ---
+    // This flow has no booking; it notifies the requester that a reply came in.
+    if (type === 'reply') {
+      if (!requestId) return NextResponse.json({ ok: false, error: 'missing requestId' }, { status: 400 })
+      const { data: rq } = await admin
+        .from('item_requests')
+        .select('id, requester_id, title')
+        .eq('id', requestId)
+        .maybeSingle()
+      if (!rq) return NextResponse.json({ ok: false, error: 'not found' }, { status: 404 })
+      // Don't email the requester about their own reply.
+      if (user.id === rq.requester_id) return NextResponse.json({ ok: true, skipped: 'self' })
+
+      const { data: rp } = await admin
+        .from('profiles').select('notify_email, full_name').eq('id', rq.requester_id).maybeSingle()
+      const to = rp?.notify_email
+      if (!to) return NextResponse.json({ ok: true, skipped: 'no-email' })
+
+      const reqTitle = rq.title || 'your request'
+      const html = emailHtml({
+        name: rp?.full_name,
+        intro: `A neighbour replied to your Wanted post <strong>“${reqTitle}”</strong> on folks — someone may have what you're looking for. Open the app to read their reply.`,
+        link: `${SITE}/requests/${rq.id}`,
+        cta: 'View the reply',
+      })
+      const sent = await sendEmail({ to, subject: `A neighbour replied about “${reqTitle}”`, html, name: rp?.full_name })
+      if (sent.skipped) return NextResponse.json({ ok: true, skipped: sent.skipped })
+      if (!sent.ok) return NextResponse.json({ ok: false, error: 'send failed', provider: sent.provider, detail: sent.detail }, { status: 502 })
+      return NextResponse.json({ ok: true, provider: sent.provider })
+    }
+
+    // --- Booking flows below all require a booking id. ---
+    if (!bookingId) {
+      return NextResponse.json({ ok: false, error: 'missing fields' }, { status: 400 })
+    }
+
+    // Look up the booking with the service-role client (so we can read private emails).
     const { data: b } = await admin
       .from('bookings')
       .select('id, borrower_id, lender_id, item:items(title)')

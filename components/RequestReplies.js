@@ -2,8 +2,9 @@
 
 import { useState } from 'react'
 import { createClient } from '@/utils/supabase/client'
+import { notify } from '@/lib/notify'
 
-export default function RequestReplies({ requestId, meId, isOwner, initial }) {
+export default function RequestReplies({ requestId, meId, isOwner, initial, closed = false }) {
   const supabase = createClient()
   const [replies, setReplies] = useState(initial || [])
   const [body, setBody] = useState('')
@@ -23,6 +24,7 @@ export default function RequestReplies({ requestId, meId, isOwner, initial }) {
       .single()
     setLoading(false)
     if (dbErr) { setError(dbErr.message); return }
+    notify({ type: 'reply', requestId })
     setReplies((cur) => [...cur, data])
     setBody('')
   }
@@ -51,7 +53,13 @@ export default function RequestReplies({ requestId, meId, isOwner, initial }) {
         ))}
       </div>
 
-      {meId && !isOwner && (
+      {closed && (
+        <div className="empty" style={{ marginTop: 14 }}>
+          This request is marked as found — it’s closed to new replies.
+        </div>
+      )}
+
+      {!closed && meId && !isOwner && (
         <form className="reply-compose" onSubmit={submit}>
           {error && <div className="err">{error}</div>}
           <label className="label">I have this — reply</label>
@@ -63,7 +71,7 @@ export default function RequestReplies({ requestId, meId, isOwner, initial }) {
         </form>
       )}
 
-      {!meId && (
+      {!closed && !meId && (
         <div className="empty"><a className="linkish" href="/">Sign in to reply →</a></div>
       )}
     </div>

@@ -2,6 +2,7 @@ import { redirect } from 'next/navigation'
 import Link from 'next/link'
 import Nav from '@/components/Nav'
 import RequestReplies from '@/components/RequestReplies'
+import RequestStatus from '@/components/RequestStatus'
 import { createClient } from '@/utils/supabase/server'
 import { fetchCategories } from '@/lib/categories'
 
@@ -60,11 +61,14 @@ export default async function RequestDetail({ params }) {
 
         {req.description && <p className="req-desc">{req.description}</p>}
 
+        <RequestStatus requestId={id} status={req.status} isOwner={isOwner} />
+
         <RequestReplies
           requestId={id}
           meId={user?.id || null}
           isOwner={isOwner}
           initial={replies}
+          closed={req.status === 'closed'}
         />
       </main>
     </>
