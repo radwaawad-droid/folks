@@ -40,7 +40,7 @@ export default function BrowseGrid({ items, categories }) {
         {q && <button className="searchbar-clear" onClick={() => setQ('')} aria-label="Clear">✕</button>}
       </div>
 
-      <div className="chips">
+      <div className="chips filter-row">
         {FILTERS.map((f) => (
           <span key={f.key}
             className={`chip ${active === f.key ? 'on' : ''}`}
