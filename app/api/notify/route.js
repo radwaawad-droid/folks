@@ -1,6 +1,7 @@
 import { NextResponse } from 'next/server'
 import { createClient } from '@/utils/supabase/server'
 import { createAdminClient } from '@/utils/supabase/admin'
+import { pushToUser } from '@/lib/push-server'
 
 export const runtime = 'nodejs'
 export const dynamic = 'force-dynamic'
@@ -82,6 +83,12 @@ export async function POST(req) {
       // Don't email the requester about their own reply.
       if (user.id === rq.requester_id) return NextResponse.json({ ok: true, skipped: 'self' })
 
+      await pushToUser(rq.requester_id, {
+        title: 'folks',
+        body: `A neighbour replied about “${rq.title || 'your request'}”`,
+        url: `/requests/${rq.id}`, tag: `reply-${rq.id}`,
+      }, admin)
+
       const { data: rp } = await admin
         .from('profiles').select('notify_email, full_name').eq('id', rq.requester_id).maybeSingle()
       const to = rp?.notify_email
@@ -111,6 +118,12 @@ export async function POST(req) {
       if (!rr || !rr.request) return NextResponse.json({ ok: false, error: 'not found' }, { status: 404 })
       // Only the requester can trigger this.
       if (user.id !== rr.request.requester_id) return NextResponse.json({ ok: false, error: 'forbidden' }, { status: 403 })
+
+      await pushToUser(rr.responder_id, {
+        title: 'folks',
+        body: `Your offer for “${rr.request.title || 'a Wanted post'}” was accepted 🎉`,
+        url: `/requests/${rr.request.id}`, tag: `accepted-${rr.id}`,
+      }, admin)
 
       const { data: rp } = await admin
         .from('profiles').select('notify_email, full_name').eq('id', rr.responder_id).maybeSingle()
@@ -157,6 +170,12 @@ export async function POST(req) {
         .neq('sender_id', recipientId)
         .is('read_at', null)
       if ((count || 0) > 1) return NextResponse.json({ ok: true, skipped: 'already-unread' })
+
+      await pushToUser(recipientId, {
+        title: 'folks',
+        body: `New message about “${rr.request.title || 'a Wanted post'}”`,
+        url: `/requests/${rr.request.id}`, tag: `wmsg-${replyId}`,
+      }, admin)
 
       const { data: rp } = await admin
         .from('profiles').select('notify_email, full_name').eq('id', recipientId).maybeSingle()
@@ -235,6 +254,10 @@ export async function POST(req) {
     } else {
       return NextResponse.json({ ok: false, error: 'unknown type' }, { status: 400 })
     }
+
+    await pushToUser(recipientId, {
+      title: 'folks', body: subject, url: path, tag: `${type}-${b.id}`,
+    }, admin)
 
     // Recipient's email + name.
     const { data: rp } = await admin
