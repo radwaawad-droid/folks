@@ -2,6 +2,7 @@ import { redirect } from 'next/navigation'
 import Link from 'next/link'
 import { createClient } from '@/utils/supabase/server'
 import AuthForm from '@/components/AuthForm'
+import GetAppLink from '@/components/GetAppLink'
 
 export const dynamic = 'force-dynamic'
 
@@ -66,6 +67,8 @@ export default async function Home() {
           <Link href="/guidelines" className="lp-footlink">Community guidelines</Link>
           <span className="lp-footsep">·</span>
           <Link href="/privacy" className="lp-footlink">Privacy policy</Link>
+          <span className="lp-footsep">·</span>
+          <GetAppLink className="lp-footlink" />
         </div>
       </footer>
     </div>

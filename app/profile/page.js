@@ -5,6 +5,7 @@ import SignOutButton from '@/components/SignOutButton'
 import IncomingRequests from '@/components/IncomingRequests'
 import BookingActions from '@/components/BookingActions'
 import EnableNotifications from '@/components/EnableNotifications'
+import GetAppLink from '@/components/GetAppLink'
 import { createClient } from '@/utils/supabase/server'
 
 export const dynamic = 'force-dynamic'
@@ -151,6 +152,8 @@ export default async function ProfilePage() {
           <a className="linkish" href="/guidelines">Community guidelines</a>
           <span style={{ color: 'var(--muted)', margin: '0 10px' }}>·</span>
           <a className="linkish" href="/feedback">Suggestions &amp; complaints</a>
+          <span style={{ color: 'var(--muted)', margin: '0 10px' }}>·</span>
+          <GetAppLink />
         </div>
       </main>
     </>

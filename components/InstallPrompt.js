@@ -17,31 +17,38 @@ export default function InstallPrompt() {
       window.matchMedia?.('(display-mode: standalone)').matches || window.navigator.standalone
     if (standalone) return
 
-    // Respect a recent dismissal (snooze ~14 days).
-    try {
-      const ts = Number(localStorage.getItem(DISMISS_KEY) || 0)
-      if (ts && Date.now() - ts < 14 * 86400000) return
-    } catch (_) {}
+    const snoozed = () => {
+      try {
+        const ts = Number(localStorage.getItem(DISMISS_KEY) || 0)
+        return ts && Date.now() - ts < 14 * 86400000
+      } catch (_) { return false }
+    }
 
-    // Android / desktop Chrome: capture the native install prompt.
+    // Android / desktop Chrome: always capture the native prompt; only
+    // auto-show it if the member hasn't recently dismissed it.
     const onBIP = (e) => {
       e.preventDefault()
       setDeferred(e)
-      setShow(true)
+      if (!snoozed()) setShow(true)
     }
     window.addEventListener('beforeinstallprompt', onBIP)
 
-    // iOS Safari never fires beforeinstallprompt → show a short manual hint.
+    // iOS Safari never fires beforeinstallprompt → manual hint.
     const ua = window.navigator.userAgent || ''
     const isIOS = /iphone|ipad|ipod/i.test(ua)
     const isSafari = /safari/i.test(ua) && !/crios|fxios|edgios/i.test(ua)
-    if (isIOS && isSafari) { setIosHint(true); setShow(true) }
+    if (isIOS && isSafari) { setIosHint(true); if (!snoozed()) setShow(true) }
+
+    // "Get the app" links fire this to re-open the banner, ignoring the snooze.
+    const onOpen = () => setShow(true)
+    window.addEventListener('folks:install', onOpen)
 
     const onInstalled = () => setShow(false)
     window.addEventListener('appinstalled', onInstalled)
 
     return () => {
       window.removeEventListener('beforeinstallprompt', onBIP)
+      window.removeEventListener('folks:install', onOpen)
       window.removeEventListener('appinstalled', onInstalled)
     }
   }, [])
