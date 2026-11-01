@@ -1,5 +1,6 @@
 import './globals.css'
 import PWARegister from '@/components/PWARegister'
+import InstallPrompt from '@/components/InstallPrompt'
 
 export const metadata = {
   title: 'folks — borrow from your neighbours',
@@ -36,6 +37,7 @@ export default function RootLayout({ children }) {
       <body>
         {children}
         <PWARegister />
+        <InstallPrompt />
       </body>
     </html>
   )
