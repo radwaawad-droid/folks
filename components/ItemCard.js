@@ -1,27 +1,20 @@
 import Link from 'next/link'
-
-const CATEGORY_META = {
-  tools:       { emoji: '🔧', cls: 'ph-tools' },
-  sports:      { emoji: '⚽', cls: 'ph-camp' },
-  party:       { emoji: '🎉', cls: 'ph-party' },
-  garden:      { emoji: '🌿', cls: 'ph-camp' },
-  electronics: { emoji: '🔌', cls: 'ph-default' },
-  toys:        { emoji: '🧸', cls: 'ph-baby' },
-  pets:        { emoji: '🐾', cls: 'ph-default' },
-  bbq:         { emoji: '🍖', cls: 'ph-party' },
-}
+import DoorMark from '@/components/DoorMark'
 
 // showStatus: when true (e.g. on your own profile), show an Active/Paused pill.
 export default function ItemCard({ item, showStatus = false }) {
-  const meta = CATEGORY_META[item.category] || { emoji: '📦', cls: 'ph-default' }
   const owner = item.owner || {}
   const photo = Array.isArray(item.photos) && item.photos.length ? item.photos[0] : null
   const paused = item.status === 'paused'
+  const rating = owner.rating_avg ? Number(owner.rating_avg).toFixed(1) : null
 
   return (
     <Link href={`/item/${item.id}`} className="item">
-      <div className={photo ? 'ph' : `ph ${meta.cls}`}>
-        {photo ? <img className="ph-img" src={photo} alt={item.title} /> : (item.emoji || meta.emoji)}
+      <div className={photo ? 'ph' : 'ph ph-empty'}>
+        {photo
+          ? <img className="ph-img" src={photo} alt={item.title} />
+          : <DoorMark className="ph-door" />}
+        {rating && <span className="rate-pill"><span className="star">★</span> {rating}</span>}
         {showStatus && (
           <span className={`status-pill ${paused ? 'paused' : 'active'}`}>
             {paused ? 'Paused' : 'Active'}
@@ -35,8 +28,7 @@ export default function ItemCard({ item, showStatus = false }) {
         </div>
         <div className="l">
           <span className="vk">✓</span> {owner.full_name || 'Neighbour'}
-          {owner.rating_avg ? <> · <span className="star">★</span>{owner.rating_avg}</> : null}
-          {owner.sub_area ? ` · ${owner.sub_area}` : ''}
+          {owner.sub_area ? <span className="l-area"> · {owner.sub_area}</span> : null}
         </div>
       </div>
     </Link>

@@ -3,6 +3,7 @@ import Nav from '@/components/Nav'
 import RequestForm from '@/components/RequestForm'
 import OwnerControls from '@/components/OwnerControls'
 import Gallery from '@/components/Gallery'
+import DoorMark from '@/components/DoorMark'
 import { createClient } from '@/utils/supabase/server'
 import { sampleById } from '@/lib/sample'
 import { fetchCategories, clsFor } from '@/lib/categories'
@@ -75,7 +76,7 @@ export default async function ItemPage({ params }) {
             {Array.isArray(item.photos) && item.photos.length ? (
               <Gallery photos={item.photos} alt={item.title} />
             ) : (
-              <div className={`detail-hero ${meta.cls}`}>{item.emoji || meta.emoji}</div>
+              <div className="detail-hero ph-empty"><DoorMark className="ph-door" /></div>
             )}
 
             <h1 className="detail-title">{item.title}</h1>
