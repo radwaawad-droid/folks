@@ -188,7 +188,7 @@ export default function AdminPanel({ items, profiles, categories = [], counts, s
       )}
 
       <style jsx>{`
-        .stat-grid{display:grid;grid-template-columns:repeat(4,1fr);gap:12px;margin-bottom:22px}
+        .stat-grid{display:grid;grid-template-columns:repeat(2,1fr);gap:12px;margin-bottom:22px}
         .stat-tile{background:#fff;border:1px solid var(--line);border-radius:14px;padding:16px 16px 14px}
         .stat-tile.accent{border-color:var(--coral);background:#FFF6F1}
         .stat-num{font-family:'Fraunces',Georgia,serif;font-weight:700;font-size:30px;line-height:1;color:var(--green)}

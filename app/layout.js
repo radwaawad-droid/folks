@@ -35,7 +35,7 @@ export default function RootLayout({ children }) {
         />
       </head>
       <body>
-        {children}
+        <div className="app-shell">{children}</div>
         <PWARegister />
         <InstallPrompt />
       </body>
