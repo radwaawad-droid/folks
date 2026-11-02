@@ -16,9 +16,10 @@ export default async function BrowsePage() {
   try {
     let query = supabase
       .from('items')
-      .select('*, owner:profiles(full_name, rating_avg, sub_area)')
+      .select('id, title, fee_per_day, is_free, status, category, photos, created_at, owner:profiles(full_name, rating_avg, sub_area)')
       .eq('status', 'available')
       .order('created_at', { ascending: false })
+      .limit(100)
     if (user) query = query.neq('owner_id', user.id) // hide your own listings here
     const { data, error } = await query
     if (error) throw error

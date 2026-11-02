@@ -14,43 +14,32 @@ export default async function Nav() {
   let wantedNew = false
 
   if (user) {
-    const { data: profile } = await supabase
-      .from('profiles').select('full_name, avatar_url, banned, is_admin, wanted_seen_at').eq('id', user.id).maybeSingle()
+    // Run the independent lookups together instead of one after another.
+    const [{ data: profile }, { count: reqCount }, { data: myBookings }] = await Promise.all([
+      supabase.from('profiles').select('full_name, avatar_url, banned, is_admin, wanted_seen_at').eq('id', user.id).maybeSingle(),
+      supabase.from('bookings').select('id', { count: 'exact', head: true }).eq('lender_id', user.id).eq('status', 'requested'),
+      supabase.from('bookings').select('id').or(`borrower_id.eq.${user.id},lender_id.eq.${user.id}`),
+    ])
     // Banned members are signed out of the app everywhere Nav renders.
     if (profile?.banned) redirect('/suspended')
     initial = (profile?.full_name || 'Y').charAt(0).toUpperCase()
     avatarUrl = profile?.avatar_url || null
     isAdmin = !!profile?.is_admin
-
-    // Dot on the Wanted icon when a neighbour has posted a request the member
-    // hasn't seen yet (not their own). Clears when they open /requests.
-    const { count: newWanted } = await supabase
-      .from('item_requests')
-      .select('id', { count: 'exact', head: true })
-      .eq('status', 'open')
-      .neq('requester_id', user.id)
-      .gt('created_at', profile?.wanted_seen_at || '1970-01-01T00:00:00Z')
-    wantedNew = (newWanted || 0) > 0
-
-    const { count: reqCount } = await supabase
-      .from('bookings')
-      .select('id', { count: 'exact', head: true })
-      .eq('lender_id', user.id)
-      .eq('status', 'requested')
     pendingRequests = reqCount || 0
 
-    const { data: myBookings } = await supabase
-      .from('bookings').select('id').or(`borrower_id.eq.${user.id},lender_id.eq.${user.id}`)
     const ids = (myBookings || []).map((b) => b.id)
-    if (ids.length) {
-      const { count: msgCount } = await supabase
-        .from('messages')
+    const [{ count: newWanted }, msg] = await Promise.all([
+      supabase.from('item_requests')
         .select('id', { count: 'exact', head: true })
-        .in('booking_id', ids)
-        .neq('sender_id', user.id)
-        .is('read_at', null)
-      unreadMessages = msgCount || 0
-    }
+        .eq('status', 'open').neq('requester_id', user.id)
+        .gt('created_at', profile?.wanted_seen_at || '1970-01-01T00:00:00Z'),
+      ids.length
+        ? supabase.from('messages').select('id', { count: 'exact', head: true })
+            .in('booking_id', ids).neq('sender_id', user.id).is('read_at', null)
+        : Promise.resolve({ count: 0 }),
+    ])
+    wantedNew = (newWanted || 0) > 0
+    unreadMessages = msg?.count || 0
   }
 
   const Avatar = () => (

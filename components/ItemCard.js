@@ -12,7 +12,7 @@ export default function ItemCard({ item, showStatus = false }) {
     <Link href={`/item/${item.id}`} className="item">
       <div className={photo ? 'ph' : 'ph ph-empty'}>
         {photo
-          ? <img className="ph-img" src={photo} alt={item.title} />
+          ? <img className="ph-img" src={photo} alt={item.title} loading="lazy" decoding="async" />
           : <DoorMark className="ph-door" />}
         {rating && <span className="rate-pill"><span className="star">★</span> {rating}</span>}
         {showStatus && (
