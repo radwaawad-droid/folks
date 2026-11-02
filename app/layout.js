@@ -1,6 +1,7 @@
 import './globals.css'
 import PWARegister from '@/components/PWARegister'
 import InstallPrompt from '@/components/InstallPrompt'
+import NotifPrompt from '@/components/NotifPrompt'
 
 export const metadata = {
   title: 'folks — borrow from your neighbours',
@@ -38,6 +39,7 @@ export default function RootLayout({ children }) {
         <div className="app-shell">{children}</div>
         <PWARegister />
         <InstallPrompt />
+        <NotifPrompt />
       </body>
     </html>
   )

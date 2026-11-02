@@ -4,7 +4,6 @@ import ItemCard from '@/components/ItemCard'
 import SignOutButton from '@/components/SignOutButton'
 import IncomingRequests from '@/components/IncomingRequests'
 import BookingActions from '@/components/BookingActions'
-import EnableNotifications from '@/components/EnableNotifications'
 import GetAppLink from '@/components/GetAppLink'
 import { createClient } from '@/utils/supabase/server'
 
@@ -84,8 +83,6 @@ export default async function ProfilePage() {
             </div>
           </div>
         </section>
-
-        <EnableNotifications />
 
         {profile.is_admin && (
           <a className="btn sm" href="/admin" style={{ display: 'inline-block', marginBottom: 6 }}>Admin dashboard</a>
