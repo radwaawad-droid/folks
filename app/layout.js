@@ -2,6 +2,7 @@ import './globals.css'
 import PWARegister from '@/components/PWARegister'
 import InstallPrompt from '@/components/InstallPrompt'
 import NotifPrompt from '@/components/NotifPrompt'
+import BootSplash from '@/components/BootSplash'
 
 export const metadata = {
   title: 'folks — borrow from your neighbours',
@@ -28,6 +29,8 @@ export default function RootLayout({ children }) {
   return (
     <html lang="en">
       <head>
+        {/* Skip the boot splash on repeat loads in the same session (no flash). */}
+        <script dangerouslySetInnerHTML={{ __html: "try{if(sessionStorage.getItem('folks-booted'))document.documentElement.setAttribute('data-booted','1')}catch(e){}" }} />
         <link rel="preconnect" href="https://fonts.googleapis.com" />
         <link rel="preconnect" href="https://fonts.gstatic.com" crossOrigin="" />
         <link
@@ -36,6 +39,7 @@ export default function RootLayout({ children }) {
         />
       </head>
       <body>
+        <BootSplash />
         <div className="app-shell">{children}</div>
         <PWARegister />
         <InstallPrompt />
