@@ -20,16 +20,16 @@ export default function BootSplash() {
 
   return (
     <div id="boot-splash" className={hide ? 'boot boot-hide' : 'boot'} aria-hidden="true">
-      <svg className="boot-mark" viewBox="0 0 120 132" fill="none" role="img" aria-label="folks">
-        {/* doorway interior, revealed as the door opens */}
-        <path d="M38 122 V58 a22 22 0 0 1 44 0 V122 Z" fill="#E7F0EC" />
-        {/* arch frame */}
-        <path d="M27 122 V57 a33 33 0 0 1 66 0 V122"
-          stroke="#205C49" strokeWidth="9" strokeLinecap="round" strokeLinejoin="round" />
-        {/* the door, hinged on the right — swings open then shut */}
+      <svg className="boot-mark" viewBox="0 0 120 120" fill="none" role="img" aria-label="folks">
+        {/* the app-icon tile — same colours as the logo */}
+        <rect x="0" y="0" width="120" height="120" rx="27" fill="#205C49" />
+        {/* white arch frame */}
+        <path d="M36 95 V52 a24 24 0 0 1 48 0 V95"
+          stroke="#fff" strokeWidth="8" strokeLinecap="round" strokeLinejoin="round" />
+        {/* coral door, hinged on the right — swings open then shut, revealing the green behind */}
         <g className="boot-door">
-          <path d="M41 122 V62 h38 v60 Z" fill="#F2774E" />
-          <circle cx="49" cy="94" r="3.4" fill="#fff" />
+          <path d="M47 95 V60 h26 v35 Z" fill="#F2774E" />
+          <circle cx="53" cy="79" r="2.6" fill="#fff" />
         </g>
       </svg>
 
@@ -37,7 +37,7 @@ export default function BootSplash() {
         .boot{position:fixed;inset:0;z-index:2000;display:flex;align-items:center;justify-content:center;
           background:var(--paper);transition:opacity .5s ease}
         .boot-hide{opacity:0}
-        .boot-mark{width:116px;height:auto;filter:drop-shadow(0 8px 24px rgba(28,38,32,.10))}
+        .boot-mark{width:120px;height:auto;filter:drop-shadow(0 10px 28px rgba(28,38,32,.14))}
         .boot-door{transform-box:fill-box;transform-origin:right center;animation:boot-swing 1.25s ease-in-out both}
         @keyframes boot-swing{
           0%{transform:scaleX(1)}
