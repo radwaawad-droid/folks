@@ -14,6 +14,25 @@ export default function AdminPanel({ items, profiles, categories = [], counts, s
   const [q, setQ] = useState('')
   const [newLabel, setNewLabel] = useState('')
   const [newEmoji, setNewEmoji] = useState('')
+  const [migrating, setMigrating] = useState(false)
+  const [migrateMsg, setMigrateMsg] = useState('')
+
+  async function migratePhotos() {
+    if (!window.confirm('Move any old in-database photos to storage? Safe to run anytime.')) return
+    setMigrating(true); setMigrateMsg('')
+    try {
+      const r = await fetch('/api/migrate-photos', { method: 'POST' })
+      const j = await r.json()
+      if (!j.ok) { setMigrateMsg(j.error || 'Migration failed.'); setMigrating(false); return }
+      setMigrateMsg(
+        j.converted === 0
+          ? 'All photos are already on storage — nothing to migrate.'
+          : `Moved ${j.converted} photo(s) across ${j.itemsTouched} listing(s).` +
+            (j.remaining ? ` ${j.remaining} left — run again to finish.` : '')
+      )
+    } catch (e) { setMigrateMsg(String(e)) }
+    setMigrating(false)
+  }
 
   async function call(payload, confirmMsg) {
     if (confirmMsg && !window.confirm(confirmMsg)) return
@@ -60,6 +79,13 @@ export default function AdminPanel({ items, profiles, categories = [], counts, s
           ))}
         </div>
       )}
+
+      <div className="migrate-row">
+        <button className="btn sm ghost" onClick={migratePhotos} disabled={migrating}>
+          {migrating ? 'Moving photos…' : 'Move old photos to storage'}
+        </button>
+        {migrateMsg && <span className="migrate-msg">{migrateMsg}</span>}
+      </div>
 
       <div className="seg" style={{ maxWidth: 520, marginBottom: 16 }}>
         <span className={`segb ${tab === 'listings' ? 'on' : ''}`} onClick={() => setTab('listings')}>
@@ -189,6 +215,8 @@ export default function AdminPanel({ items, profiles, categories = [], counts, s
 
       <style jsx>{`
         .stat-grid{display:grid;grid-template-columns:repeat(2,1fr);gap:12px;margin-bottom:22px}
+        .migrate-row{display:flex;align-items:center;gap:12px;flex-wrap:wrap;margin-bottom:16px}
+        .migrate-msg{font-size:12px;color:var(--muted)}
         .stat-tile{background:#fff;border:1px solid var(--line);border-radius:14px;padding:16px 16px 14px}
         .stat-tile.accent{border-color:var(--coral);background:#FFF6F1}
         .stat-num{font-family:'Fraunces',Georgia,serif;font-weight:700;font-size:30px;line-height:1;color:var(--green)}

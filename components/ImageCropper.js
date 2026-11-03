@@ -62,7 +62,7 @@ export default function ImageCropper({ file, onDone, onCancel, out = 900 }) {
     const ctx = c.getContext('2d')
     ctx.fillStyle = '#ffffff'; ctx.fillRect(0, 0, out, out)
     ctx.drawImage(img, left * ratio, top * ratio, dw * ratio, dh * ratio)
-    onDone(c.toDataURL('image/jpeg', 0.85))
+    c.toBlob((blob) => { if (blob) onDone(blob) }, 'image/jpeg', 0.85)
   }
 
   const bs = baseScale() * zoom

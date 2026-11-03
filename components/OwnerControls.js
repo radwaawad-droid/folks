@@ -3,6 +3,7 @@
 import { useState } from 'react'
 import { createClient } from '@/utils/supabase/client'
 import ImageCropper from '@/components/ImageCropper'
+import { uploadPhoto } from '@/lib/upload'
 
 export default function OwnerControls({ item }) {
   const supabase = createClient()
@@ -13,6 +14,7 @@ export default function OwnerControls({ item }) {
   const [deposit, setDeposit] = useState(item.deposit || '')
   const [photos, setPhotos] = useState(Array.isArray(item.photos) ? item.photos : [])
   const [pendingFile, setPendingFile] = useState(null)
+  const [uploading, setUploading] = useState(false)
   const [status, setStatus] = useState(item.status || 'available')
   const [loading, setLoading] = useState(false)
   const [error, setError] = useState('')
@@ -104,7 +106,10 @@ export default function OwnerControls({ item }) {
               onClick={() => setPhotos(photos.filter((_, j) => j !== i))}>×</button>
           </div>
         ))}
-        {photos.length < MAX_PHOTOS && (
+        {uploading && (
+          <div className="photo-tile photo-uploading"><span>Uploading…</span></div>
+        )}
+        {photos.length < MAX_PHOTOS && !uploading && (
           <label className="photo-add">
             <span className="photo-add-plus">＋</span>
             <span>Add</span>
@@ -114,8 +119,8 @@ export default function OwnerControls({ item }) {
         )}
       </div>
 
-      <button className="btn full" style={{ marginTop: 16 }} disabled={loading}>
-        {loading ? 'Saving…' : 'Save changes'}
+      <button className="btn full" style={{ marginTop: 16 }} disabled={loading || uploading}>
+        {loading ? 'Saving…' : uploading ? 'Uploading photo…' : 'Save changes'}
       </button>
       <button type="button" className="linkish" style={{ marginTop: 12 }} onClick={() => setEditing(false)}>
         Cancel
@@ -124,7 +129,12 @@ export default function OwnerControls({ item }) {
       {pendingFile && (
         <ImageCropper
           file={pendingFile}
-          onDone={(dataUrl) => { setPhotos((p) => [...p, dataUrl].slice(0, MAX_PHOTOS)); setPendingFile(null) }}
+          onDone={async (blob) => {
+            setPendingFile(null); setUploading(true)
+            const url = await uploadPhoto(supabase, blob)
+            if (url) setPhotos((p) => [...p, url].slice(0, MAX_PHOTOS))
+            setUploading(false)
+          }}
           onCancel={() => setPendingFile(null)}
         />
       )}
@@ -132,6 +142,7 @@ export default function OwnerControls({ item }) {
       <style jsx>{`
         .photo-grid{display:flex;flex-wrap:wrap;gap:10px;margin-top:4px}
         .photo-tile{position:relative;width:84px;height:84px;border-radius:13px;overflow:hidden;border:1px solid #ECE6DB;background:#fff}
+        .photo-uploading{display:flex;align-items:center;justify-content:center;background:#F3EEE4;color:#6B7770;font-size:10.5px;font-weight:600}
         .photo-tile img{width:100%;height:100%;object-fit:cover;display:block}
         .cover-tag{position:absolute;left:5px;bottom:5px;background:rgba(32,92,73,.9);color:#fff;
           font-size:9px;font-weight:700;padding:2px 6px;border-radius:999px}

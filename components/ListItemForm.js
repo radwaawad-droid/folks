@@ -3,6 +3,7 @@
 import { useState } from 'react'
 import { createClient } from '@/utils/supabase/client'
 import ImageCropper from '@/components/ImageCropper'
+import { uploadPhoto } from '@/lib/upload'
 import { DEFAULT_CATEGORIES } from '@/lib/categories'
 
 export default function ListItemForm({ communityId, categories }) {
@@ -15,7 +16,8 @@ export default function ListItemForm({ communityId, categories }) {
   const [fee, setFee] = useState('')
   const [deposit, setDeposit] = useState('')
   const [pendingFile, setPendingFile] = useState(null) // file waiting to be cropped
-  const [photos, setPhotos] = useState([])            // final cropped data URLs
+  const [photos, setPhotos] = useState([])            // final photo URLs (storage)
+  const [uploading, setUploading] = useState(false)
   const [loading, setLoading] = useState(false)
   const MAX_PHOTOS = 5
   const [error, setError] = useState('')
@@ -106,7 +108,10 @@ export default function ListItemForm({ communityId, categories }) {
                 onClick={() => setPhotos(photos.filter((_, j) => j !== i))}>×</button>
             </div>
           ))}
-          {photos.length < MAX_PHOTOS && (
+          {uploading && (
+            <div className="photo-tile photo-uploading"><span>Uploading…</span></div>
+          )}
+          {photos.length < MAX_PHOTOS && !uploading && (
             <label className="photo-add">
               <span className="photo-add-plus">＋</span>
               <span>Add</span>
@@ -118,14 +123,19 @@ export default function ListItemForm({ communityId, categories }) {
         <div className="hint">The first photo is the cover. You can crop &amp; zoom each one.</div>
       </div>
 
-      <button className="btn full" disabled={loading}>
-        {loading ? 'Publishing…' : 'Publish to Arabian Ranches'}
+      <button className="btn full" disabled={loading || uploading}>
+        {loading ? 'Publishing…' : uploading ? 'Uploading photo…' : 'Publish to Arabian Ranches'}
       </button>
 
       {pendingFile && (
         <ImageCropper
           file={pendingFile}
-          onDone={(dataUrl) => { setPhotos((p) => [...p, dataUrl].slice(0, MAX_PHOTOS)); setPendingFile(null) }}
+          onDone={async (blob) => {
+            setPendingFile(null); setUploading(true)
+            const url = await uploadPhoto(supabase, blob)
+            if (url) setPhotos((p) => [...p, url].slice(0, MAX_PHOTOS))
+            setUploading(false)
+          }}
           onCancel={() => setPendingFile(null)}
         />
       )}
@@ -134,6 +144,8 @@ export default function ListItemForm({ communityId, categories }) {
         .photo-grid{display:flex;flex-wrap:wrap;gap:10px}
         .photo-tile{position:relative;width:92px;height:92px;border-radius:14px;overflow:hidden;border:1px solid #ECE6DB;background:#fff}
         .photo-tile img{width:100%;height:100%;object-fit:cover;display:block}
+        .photo-uploading{display:flex;align-items:center;justify-content:center;background:#F3EEE4;
+          color:#6B7770;font-size:11px;font-weight:600}
         .cover-tag{position:absolute;left:5px;bottom:5px;background:rgba(32,92,73,.9);color:#fff;
           font-size:9.5px;font-weight:700;padding:2px 6px;border-radius:999px}
         .photo-x{position:absolute;top:4px;right:4px;width:22px;height:22px;border-radius:50%;border:none;
