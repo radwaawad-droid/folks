@@ -17,7 +17,7 @@ body{
 /* Phone-width app frame: a centered paper column on every screen size.
    On phones it simply fills the screen; on larger screens it becomes a
    deliberate app panel sitting on a branded surface. */
-.app-shell{max-width:480px;margin:0 auto;min-height:100vh;background:var(--paper)}
+.app-shell{max-width:480px;margin:0 auto;min-height:100vh;background:var(--paper);zoom:0.94}
 @media(min-width:520px){
   body{background:linear-gradient(168deg,#2b5d4b 0%,#1e4838 55%,#143829 100%);
     background-attachment:fixed}
