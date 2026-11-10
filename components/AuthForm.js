@@ -65,7 +65,18 @@ export default function AuthForm() {
       })
       if (signErr) {
         setLoading(false)
-        setError(signErr.message.includes('already') ? 'An account with that email already exists. Try signing in.' : signErr.message)
+        const m = signErr.message.toLowerCase()
+        setError(m.includes('already') || m.includes('registered')
+          ? 'An account with that email already exists. Try signing in instead.'
+          : signErr.message)
+        return
+      }
+      // Supabase hides "email exists" for privacy: on an existing email it returns
+      // a user with an empty identities array instead of an error. Catch that.
+      const identities = data?.user?.identities
+      if (Array.isArray(identities) && identities.length === 0) {
+        setLoading(false)
+        setError('An account with that email already exists. Try signing in instead.')
         return
       }
       if (!data.session) {
