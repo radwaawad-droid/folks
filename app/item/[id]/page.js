@@ -5,7 +5,6 @@ import OwnerControls from '@/components/OwnerControls'
 import Gallery from '@/components/Gallery'
 import DoorMark from '@/components/DoorMark'
 import { createClient } from '@/utils/supabase/server'
-import { sampleById } from '@/lib/sample'
 import { fetchCategories, clsFor } from '@/lib/categories'
 
 export const dynamic = 'force-dynamic'
@@ -18,7 +17,7 @@ export default async function ItemPage({ params }) {
   const catMap = Object.fromEntries(categories.map((c) => [c.key, c]))
 
   let item = null
-  let isSample = false
+  const isSample = false
 
   try {
     const { data } = await supabase
@@ -28,12 +27,7 @@ export default async function ItemPage({ params }) {
       .maybeSingle()
     item = data
   } catch (e) {
-    item = null // e.g. sample id like "s1" isn't a valid uuid — fall back below
-  }
-
-  if (!item) {
-    item = sampleById(id)
-    isSample = !!item
+    item = null
   }
 
   if (!item) {
