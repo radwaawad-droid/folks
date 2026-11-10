@@ -1,0 +1,12 @@
+[
+  {
+    "relation": ["delegate_permission/common.handle_all_urls"],
+    "target": {
+      "namespace": "android_app",
+      "package_name": "app.vercel.folks_pearl.twa",
+      "sha256_cert_fingerprints": [
+        "A9:39:08:8E:8E:42:8A:30:F4:67:34:7C:9F:8E:11:48:E3:CF:C4:9F:E5:50:0D:F1:26:19:98:60:F5:A8:8F:CF"
+      ]
+    }
+  }
+]
