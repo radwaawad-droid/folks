@@ -59,29 +59,36 @@ export default async function ProfilePage() {
     <>
       <Nav />
       <main className="container page">
-        <section className="pcard-row">
-          <div className="pcard">
+        <section className="profile-head">
+          <div className="ph-top">
             {profile.avatar_url
               ? <img className="avatar big avatar-img" src={profile.avatar_url} alt="" />
               : <span className="avatar big">{initial}</span>}
-            <div>
-              <h1 className="pname">{profile.full_name}</h1>
+            <div className="ph-id">
+              <h1 className="pname">
+                {profile.full_name}
+                <span className="ph-verify" title="Verified neighbour">✓</span>
+              </h1>
               {profile.username && <div className="uname">@{profile.username}</div>}
-              <div className="muted-sub">{profile.sub_area ? `${profile.sub_area} · ` : ''}Arabian Ranches</div>
-              <div className="prating">
-                {profile.rating_count > 0
-                  ? <><span className="star">★</span> {Number(profile.rating_avg).toFixed(1)} · {profile.rating_count} review{profile.rating_count === 1 ? '' : 's'}</>
-                  : <span className="muted-sub" style={{ margin: 0 }}>No reviews yet</span>}
-              </div>
-              <div className="badges" style={{ marginTop: 10 }}>
-                <span className="badge">✓ Verified neighbour</span>
-                <span className="badge">Arabian Ranches resident</span>
+              <div className="muted-sub" style={{ marginTop: 4 }}>
+                {profile.sub_area ? `${profile.sub_area} · ` : ''}Arabian Ranches
               </div>
             </div>
-            <div className="pcard-actions">
-              <a className="btn sm ghost" href="/profile/edit">Edit profile</a>
-              <SignOutButton />
+          </div>
+
+          <div className="ph-stats">
+            <div className="pstat"><b>{listings.length}</b><span>Listings</span></div>
+            <div className="pstat"><b>{lending.length}</b><span>Lends</span></div>
+            <div className="pstat"><b>{borrows.length}</b><span>Borrows</span></div>
+            <div className="pstat">
+              <b>{profile.rating_count > 0 ? Number(profile.rating_avg).toFixed(1) : '—'}</b>
+              <span>{profile.rating_count > 0 ? `Rating · ${profile.rating_count}` : 'Rating'}</span>
             </div>
+          </div>
+
+          <div className="ph-actions">
+            <a className="btn sm ghost" href="/profile/edit">Edit profile</a>
+            <SignOutButton />
           </div>
         </section>
 
@@ -90,13 +97,13 @@ export default async function ProfilePage() {
         )}
 
         {/* Incoming borrow requests (owner side) */}
-        <h2 className="sec-title">Requests to borrow your items</h2>
+        <h2 className="sec-title">Requests to borrow your items{requests.length ? ` · ${requests.length}` : ''}</h2>
         {requests.length === 0
           ? <div className="empty">No pending requests right now.</div>
           : <IncomingRequests requests={requests} />}
 
         {/* My borrows */}
-        <h2 className="sec-title">Your borrows</h2>
+        <h2 className="sec-title">Your borrows{borrows.length ? ` · ${borrows.length}` : ''}</h2>
         {borrows.length === 0
           ? <div className="empty">You haven’t borrowed anything yet. <a className="linkish" href="/browse">Browse items →</a></div>
           : (
@@ -119,7 +126,7 @@ export default async function ProfilePage() {
         {/* Lending activity (owner side, past request stage) */}
         {lending.length > 0 && (
           <>
-            <h2 className="sec-title">Your lending activity</h2>
+            <h2 className="sec-title">Your lending activity · {lending.length}</h2>
             <div className="rows">
               {lending.map((b) => (
                 <div className="row" key={b.id}>
@@ -139,21 +146,21 @@ export default async function ProfilePage() {
 
         {/* My listings */}
         <div className="sec-head">
-          <h2 className="sec-title" style={{ margin: 0 }}>Your listings</h2>
+          <h2 className="sec-title" style={{ margin: 0 }}>Your listings{listings.length ? ` · ${listings.length}` : ''}</h2>
           <a className="btn sm" href="/list">＋ List an item</a>
         </div>
         {listings.length === 0
           ? <div className="empty">You haven’t listed anything yet. Lending is how folks works — <a className="linkish" href="/list">list your first item →</a></div>
           : <div className="grid">{listings.map((it) => <ItemCard key={it.id} item={it} showStatus />)}</div>}
 
-        <div style={{ textAlign: 'center', marginTop: 34, paddingTop: 20, borderTop: '1px solid var(--line-2)' }}>
-          <a className="linkish" href="/guidelines">Community guidelines</a>
-          <span style={{ color: 'var(--muted)', margin: '0 10px' }}>·</span>
-          <a className="linkish" href="/feedback">Suggestions &amp; complaints</a>
-          <span style={{ color: 'var(--muted)', margin: '0 10px' }}>·</span>
-          <GetAppLink />
+        <footer className="pfoot">
+          <div className="pfoot-links">
+            <a className="linkish" href="/guidelines">Community guidelines</a>
+            <a className="linkish" href="/feedback">Suggestions &amp; complaints</a>
+            <GetAppLink />
+          </div>
           <DeleteAccount />
-        </div>
+        </footer>
       </main>
     </>
   )

@@ -191,6 +191,21 @@ a{color:inherit;text-decoration:none}
 .pname{font-family:'Fraunces',Georgia,serif;font-size:22px;margin:0}
 .pcard-actions{margin-left:auto;align-self:flex-start}
 
+/* ---------- profile header (redesigned) ---------- */
+.profile-head{background:#fff;border:1px solid var(--line);border-radius:18px;padding:20px;margin-top:8px;box-shadow:var(--shadow-sm)}
+.ph-top{display:flex;align-items:center;gap:16px}
+.ph-id{min-width:0}
+.ph-verify{color:var(--verify);font-size:15px;margin-left:7px;vertical-align:middle}
+.ph-stats{display:grid;grid-template-columns:repeat(4,1fr);gap:9px;margin-top:18px}
+.pstat{background:var(--paper);border:1px solid var(--line-2);border-radius:12px;padding:12px 6px;text-align:center}
+.pstat b{display:block;font-family:'Fraunces',Georgia,serif;font-weight:700;font-size:21px;color:var(--green);line-height:1}
+.pstat span{display:block;font-size:10.5px;color:var(--muted);margin-top:5px;white-space:nowrap}
+.ph-actions{display:flex;align-items:center;gap:14px;margin-top:16px}
+.ph-actions .linkish{margin-left:auto}
+.pfoot{margin-top:36px;padding-top:22px;border-top:1px solid var(--line-2);text-align:center}
+.pfoot-links{display:flex;flex-wrap:wrap;gap:8px 16px;justify-content:center;align-items:center}
+.pfoot .danger-zone{margin-top:18px}
+
 /* ---------- rows (borrows + requests) ---------- */
 .rows{display:flex;flex-direction:column;gap:10px}
 .row{display:flex;align-items:center;gap:14px;background:#fff;border:1px solid var(--line);
