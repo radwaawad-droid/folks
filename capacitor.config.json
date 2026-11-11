@@ -3,7 +3,7 @@
   "appName": "folks",
   "webDir": "public",
   "server": {
-    "url": "https://folks-pearl.vercel.app",
+    "url": "https://folksdxb.com",
     "cleartext": false
   },
   "ios": {

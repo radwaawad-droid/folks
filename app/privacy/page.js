@@ -107,7 +107,7 @@ export default function PrivacyPage() {
             all associated data at any time:</p>
           <ul style={{ paddingLeft: 20, margin: 0 }}>
             <li style={li}>In the app: <strong>Profile → “Delete my account”</strong>.</li>
-            <li style={li}>On the web: visit <Link className="linkish" href="/delete-account">folks-pearl.vercel.app/delete-account</Link>.</li>
+            <li style={li}>On the web: visit <Link className="linkish" href="/delete-account">folksdxb.com/delete-account</Link>.</li>
             <li style={li}>Or email <a className="linkish" href={`mailto:${SUPPORT}`}>{SUPPORT}</a> from your account email.</li>
           </ul>
           <p style={{ ...p, marginTop: 10, marginBottom: 0 }}>Deletion removes your account, profile, listings,

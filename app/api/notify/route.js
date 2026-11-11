@@ -6,7 +6,7 @@ import { pushToUser } from '@/lib/push-server'
 export const runtime = 'nodejs'
 export const dynamic = 'force-dynamic'
 
-const SITE = process.env.NEXT_PUBLIC_SITE_URL || 'https://folks-pearl.vercel.app'
+const SITE = process.env.NEXT_PUBLIC_SITE_URL || 'https://folksdxb.com'
 // Until you verify your own domain in Resend, keep the default test sender.
 const FROM = process.env.NOTIFY_FROM || 'folks <onboarding@resend.dev>'
 
