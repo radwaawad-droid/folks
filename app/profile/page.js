@@ -58,7 +58,7 @@ export default async function ProfilePage() {
   return (
     <>
       <Nav />
-      <main className="container page">
+      <main className="container page zoom-page">
         <section className="profile-head">
           <div className="ph-top">
             {profile.avatar_url

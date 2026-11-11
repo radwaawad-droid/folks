@@ -13,6 +13,8 @@ html,body{margin:0;padding:0}
 /* Zoom the whole app out a touch. Applied on html so fixed elements
    (the bottom tab bar) scale too, not just page content. */
 html{zoom:0.94}
+/* Browse and profile get an extra step of zoom-out on top of the global 0.94 */
+.zoom-page{zoom:0.93}
 body{
   font-family:'DM Sans',system-ui,-apple-system,'Segoe UI',Roboto,sans-serif;
   color:var(--ink); background:var(--paper); -webkit-font-smoothing:antialiased; line-height:1.5;

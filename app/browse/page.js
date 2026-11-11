@@ -29,7 +29,7 @@ export default async function BrowsePage() {
   return (
     <>
       <Nav />
-      <main className="container page">
+      <main className="container page zoom-page">
         <BrowseGrid items={items} categories={categories} />
       </main>
     </>
