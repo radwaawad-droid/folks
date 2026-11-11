@@ -52,12 +52,6 @@ export default async function Home() {
             </div>
           ))}
         </section>
-
-        <div className="wel-trust">
-          <span className="wel-pill">✓ Verified neighbours</span>
-          <span className="wel-pill">Residents only</span>
-          <span className="wel-pill">Rated borrows</span>
-        </div>
       </main>
 
       <footer className="lp-foot">
