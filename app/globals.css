@@ -10,6 +10,9 @@
 /* Boot splash shows once per session; hidden instantly on later loads. */
 html[data-booted] #boot-splash{display:none !important}
 html,body{margin:0;padding:0}
+/* Zoom the whole app out a touch. Applied on html so fixed elements
+   (the bottom tab bar) scale too, not just page content. */
+html{zoom:0.94}
 body{
   font-family:'DM Sans',system-ui,-apple-system,'Segoe UI',Roboto,sans-serif;
   color:var(--ink); background:var(--paper); -webkit-font-smoothing:antialiased; line-height:1.5;
@@ -17,11 +20,11 @@ body{
 /* Phone-width app frame: a centered paper column on every screen size.
    On phones it simply fills the screen; on larger screens it becomes a
    deliberate app panel sitting on a branded surface. */
-.app-shell{max-width:480px;margin:0 auto;min-height:100vh;background:var(--paper);zoom:0.94}
+.app-shell{max-width:480px;margin:0 auto;min-height:calc(100vh / 0.94);background:var(--paper)}
 @media(min-width:520px){
   body{background:linear-gradient(168deg,#2b5d4b 0%,#1e4838 55%,#143829 100%);
     background-attachment:fixed}
-  .app-shell{min-height:100dvh;box-shadow:0 30px 80px rgba(0,0,0,.30);
+  .app-shell{min-height:calc(100dvh / 0.94);box-shadow:0 30px 80px rgba(0,0,0,.30);
     border-left:1px solid rgba(255,255,255,.06);border-right:1px solid rgba(255,255,255,.06)}
 }
 h1,h2,h3,h4{font-family:'Fraunces',Georgia,serif;letter-spacing:-.3px;margin:0}
