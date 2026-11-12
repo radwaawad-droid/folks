@@ -12,6 +12,7 @@ export default function AuthForm() {
   const [subArea, setSubArea] = useState('')
   const [email, setEmail] = useState('')
   const [password, setPassword] = useState('')
+  const [showPw, setShowPw] = useState(false)
   const [loading, setLoading] = useState(false)
   const [error, setError] = useState('')
   const [notice, setNotice] = useState('')
@@ -154,8 +155,15 @@ export default function AuthForm() {
           placeholder="you@example.com" autoComplete="email" required />
 
         <label className="label" style={{ marginTop: 14 }}>Password</label>
-        <input className="input" type="password" value={password} onChange={(e) => setPassword(e.target.value)}
-          placeholder="••••••••" autoComplete={mode === 'signup' ? 'new-password' : 'current-password'} required />
+        <div className="pw-wrap">
+          <input className="input pw-input" type={showPw ? 'text' : 'password'} value={password}
+            onChange={(e) => setPassword(e.target.value)} placeholder="••••••••"
+            autoComplete={mode === 'signup' ? 'new-password' : 'current-password'} required />
+          <button type="button" className="pw-toggle" onClick={() => setShowPw((s) => !s)}
+            aria-label={showPw ? 'Hide password' : 'Show password'}>
+            {showPw ? 'Hide' : 'Show'}
+          </button>
+        </div>
 
         {mode === 'signin' && (
           <button type="button" className="linkish" style={{ marginTop: 10 }} onClick={forgot} disabled={loading}>

@@ -9,6 +9,7 @@ export default function ResetForm() {
   const [valid, setValid] = useState(false)
   const [password, setPassword] = useState('')
   const [confirm, setConfirm] = useState('')
+  const [showPw, setShowPw] = useState(false)
   const [loading, setLoading] = useState(false)
   const [error, setError] = useState('')
   const [done, setDone] = useState(false)
@@ -52,10 +53,14 @@ export default function ResetForm() {
           <form onSubmit={submit}>
             {error && <div className="err">{error}</div>}
             <label className="label">New password</label>
-            <input className="input" type="password" value={password} onChange={(e) => setPassword(e.target.value)}
-              placeholder="••••••••" autoComplete="new-password" required />
+            <div className="pw-wrap">
+              <input className="input pw-input" type={showPw ? 'text' : 'password'} value={password}
+                onChange={(e) => setPassword(e.target.value)} placeholder="••••••••" autoComplete="new-password" required />
+              <button type="button" className="pw-toggle" onClick={() => setShowPw((s) => !s)}
+                aria-label={showPw ? 'Hide password' : 'Show password'}>{showPw ? 'Hide' : 'Show'}</button>
+            </div>
             <label className="label" style={{ marginTop: 14 }}>Confirm password</label>
-            <input className="input" type="password" value={confirm} onChange={(e) => setConfirm(e.target.value)}
+            <input className="input" type={showPw ? 'text' : 'password'} value={confirm} onChange={(e) => setConfirm(e.target.value)}
               placeholder="••••••••" autoComplete="new-password" required />
             <button className="btn full" style={{ marginTop: 16 }} disabled={loading}>
               {loading ? 'Saving…' : 'Update password'}
