@@ -7,7 +7,7 @@ export const runtime = 'nodejs'
 export const dynamic = 'force-dynamic'
 
 // Where suggestions & complaints land. Override with FEEDBACK_TO in Vercel.
-const FEEDBACK_TO = process.env.FEEDBACK_TO || 'dxbfolks@gmail.com'
+const FEEDBACK_TO = process.env.FEEDBACK_TO || 'hello@folksdxb.com'
 
 export async function POST(req) {
   try {
