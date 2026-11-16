@@ -190,6 +190,22 @@ a{color:inherit;text-decoration:none}
   font-weight:700;font-size:14px;cursor:pointer;font-family:'DM Sans',sans-serif}
 .segb.on{background:var(--green);color:#fff;border-color:var(--green)}
 
+/* Suggestions & complaints page */
+.fb-back{display:inline-block;margin-bottom:16px;font-weight:600}
+.fb-head{margin-bottom:16px}
+.fb-head h1{font-family:'Fraunces',Georgia,serif;font-weight:600;font-size:24px;line-height:1.1;color:var(--ink);margin:0}
+.fb-head p{font-size:14px;line-height:1.55;color:var(--muted);margin:8px 0 0}
+.fb-card{background:#fff;border:1px solid var(--line);border-radius:18px;padding:20px;box-shadow:var(--shadow-sm)}
+.fb-card .field:last-of-type{margin-bottom:18px}
+.fb-note{font-size:12px;line-height:1.5;color:var(--muted);margin:12px 0 0;text-align:center}
+.fb-sent{text-align:center;padding:30px 22px}
+.fb-check{display:inline-flex;align-items:center;justify-content:center;width:52px;height:52px;border-radius:50%;
+  background:var(--green-soft);color:var(--green);margin-bottom:14px}
+.fb-sent h2{font-family:'Fraunces',Georgia,serif;font-weight:600;font-size:20px;color:var(--green);margin:0}
+.fb-sent p{font-size:14px;line-height:1.6;color:var(--muted);margin:8px auto 0;max-width:360px}
+.fb-sent-actions{display:flex;gap:10px;justify-content:center;flex-wrap:wrap;margin-top:22px}
+.fb-sent-actions .btn{flex:0 0 auto}
+
 /* ---------- profile header ---------- */
 .pcard-row{margin-top:8px}
 .pcard{display:flex;align-items:center;gap:18px;background:#fff;border:1px solid var(--line);

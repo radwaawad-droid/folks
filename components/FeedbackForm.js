@@ -26,21 +26,36 @@ export default function FeedbackForm() {
     setLoading(false)
   }
 
+  function reset() {
+    setSent(false); setMessage(''); setError(''); setKind('suggestion')
+  }
+
   if (sent) {
     return (
-      <div className="empty" style={{ marginTop: 16 }}>
-        Thank you — your {kind} has been sent to the folks team. We read every message.
+      <div className="fb-card fb-sent">
+        <span className="fb-check" aria-hidden="true">
+          <svg width="26" height="26" viewBox="0 0 24 24" fill="none">
+            <path d="M5 12.5l4.2 4.2L19 7" stroke="currentColor" strokeWidth="2.4"
+              strokeLinecap="round" strokeLinejoin="round" />
+          </svg>
+        </span>
+        <h2>Message sent</h2>
+        <p>Thank you — your {kind} reached the folks team. We read every one, and we’ll reply to the email on your profile if a response is needed.</p>
+        <div className="fb-sent-actions">
+          <a className="btn" href="/profile">Back to profile</a>
+          <button type="button" className="btn ghost" onClick={reset}>Send another</button>
+        </div>
       </div>
     )
   }
 
   return (
-    <form className="listform" onSubmit={submit}>
+    <form className="fb-card" onSubmit={submit}>
       {error && <div className="err">{error}</div>}
 
       <div className="field">
         <label className="label">What’s this about?</label>
-        <div className="seg" style={{ maxWidth: 320 }}>
+        <div className="seg">
           <span className={`segb ${kind === 'suggestion' ? 'on' : ''}`} onClick={() => setKind('suggestion')}>Suggestion</span>
           <span className={`segb ${kind === 'complaint' ? 'on' : ''}`} onClick={() => setKind('complaint')}>Complaint</span>
         </div>
@@ -57,8 +72,8 @@ export default function FeedbackForm() {
       <button className="btn full" disabled={loading || !message.trim()}>
         {loading ? 'Sending…' : 'Send to the folks team'}
       </button>
-      <p className="muted-sub" style={{ fontSize: 12, marginTop: 10 }}>
-        Goes straight to the folks team. We’ll reply to the email on your profile if a response is needed.
+      <p className="fb-note">
+        Goes straight to the folks team at hello@folksdxb.com. Your name and area come along so we know who to thank.
       </p>
     </form>
   )

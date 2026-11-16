@@ -13,11 +13,14 @@ export default async function FeedbackPage() {
   return (
     <>
       <Nav />
-      <main className="container page" style={{ maxWidth: 560 }}>
-        <h1 className="browse-head" style={{ marginBottom: 4 }}>Suggestions & complaints</h1>
-        <p className="muted-sub" style={{ marginBottom: 20 }}>
-          Got an idea to make folks better, or something that didn’t go well? Tell us — every message reaches the team.
-        </p>
+      <main className="container page" style={{ maxWidth: 540 }}>
+        <a href="/profile" className="linkish fb-back">← Back to profile</a>
+
+        <div className="fb-head">
+          <h1>Suggestions &amp; complaints</h1>
+          <p>Got an idea to make folks better, or something that didn’t go well? Tell us — every message reaches the team.</p>
+        </div>
+
         <FeedbackForm />
       </main>
     </>
