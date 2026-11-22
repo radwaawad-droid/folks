@@ -1,6 +1,6 @@
 'use client'
 
-import { useState, useEffect } from 'react'
+import { useState, useEffect, useRef } from 'react'
 import { createClient } from '@/utils/supabase/client'
 
 const SUB_AREAS = ['Saheel','Palmera','Alvorada','Mirador','Alma','Savannah','Hattan','Al Reem','AR2','AR3','Other / not sure']
@@ -19,6 +19,15 @@ export default function AuthForm() {
   const [loading, setLoading] = useState(false)
   const [error, setError] = useState('')
   const [notice, setNotice] = useState('')
+  const noticeRef = useRef(null)
+
+  // When a notice appears (e.g. "check your email…"), bring it into view so it
+  // isn't missed below the fold on a phone.
+  useEffect(() => {
+    if (notice && noticeRef.current) {
+      noticeRef.current.scrollIntoView({ behavior: 'smooth', block: 'center' })
+    }
+  }, [notice])
 
   function switchMode(m) { setMode(m); setError(''); setNotice('') }
   const origin = typeof window !== 'undefined' ? window.location.origin : ''
@@ -136,7 +145,7 @@ export default function AuthForm() {
       </div>
 
       {error && <div className="err">{error}</div>}
-      {notice && <div className="notice-box">{notice}</div>}
+      {notice && <div className="notice-box" ref={noticeRef}>{notice}</div>}
 
       <button type="button" className="btn google full" onClick={google}>
         <svg width="18" height="18" viewBox="0 0 48 48" aria-hidden="true">
