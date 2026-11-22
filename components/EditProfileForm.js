@@ -14,6 +14,14 @@ export default function EditProfileForm({ profile }) {
   const [loading, setLoading] = useState(false)
   const [error, setError] = useState('')
 
+  // Sign-in email change (separate flow — needs email confirmation).
+  const currentEmail = profile.email || ''
+  const [showEmail, setShowEmail] = useState(false)
+  const [newEmail, setNewEmail] = useState('')
+  const [emailLoading, setEmailLoading] = useState(false)
+  const [emailErr, setEmailErr] = useState('')
+  const [emailMsg, setEmailMsg] = useState('')
+
   function onPick(f) {
     setFile(f)
     if (f) { const r = new FileReader(); r.onload = () => setPreview(r.result); r.readAsDataURL(f) }
@@ -45,34 +53,82 @@ export default function EditProfileForm({ profile }) {
     window.location.href = '/profile'
   }
 
+  async function changeEmail(e) {
+    e.preventDefault(); setEmailErr(''); setEmailMsg('')
+    const next = newEmail.trim().toLowerCase()
+    if (!next || !next.includes('@')) { setEmailErr('Enter a valid email address.'); return }
+    if (next === currentEmail.toLowerCase()) { setEmailErr('That’s already your email.'); return }
+    setEmailLoading(true)
+    const { error: upErr } = await supabase.auth.updateUser(
+      { email: next },
+      { emailRedirectTo: `${window.location.origin}/auth/callback?next=/profile` }
+    )
+    setEmailLoading(false)
+    if (upErr) { setEmailErr(upErr.message); return }
+    setEmailMsg(`Almost done — we sent a confirmation link to ${next}. Open it to finish the change. (Check your spam folder if it’s not there, and you may also get a confirmation at your current email.)`)
+    setShowEmail(false); setNewEmail('')
+  }
+
   return (
-    <form className="listform" onSubmit={save}>
-      {error && <div className="err">{error}</div>}
+    <>
+      <form className="listform" onSubmit={save}>
+        {error && <div className="err">{error}</div>}
 
-      <div className="edit-avatar-row">
-        {preview ? <img className="edit-avatar" src={preview} alt="" />
-                 : <span className="avatar big">{(fullName || 'Y').charAt(0).toUpperCase()}</span>}
-        <label className="btn sm ghost edit-avatar-btn">
-          Change photo
-          <input type="file" accept="image/*" style={{ display: 'none' }}
-            onChange={(e) => onPick(e.target.files?.[0] || null)} />
-        </label>
+        <div className="edit-avatar-row">
+          {preview ? <img className="edit-avatar" src={preview} alt="" />
+                   : <span className="avatar big">{(fullName || 'Y').charAt(0).toUpperCase()}</span>}
+          <label className="btn sm ghost edit-avatar-btn">
+            Change photo
+            <input type="file" accept="image/*" style={{ display: 'none' }}
+              onChange={(e) => onPick(e.target.files?.[0] || null)} />
+          </label>
+        </div>
+
+        <div className="field">
+          <label className="label">Full name</label>
+          <input className="input" value={fullName} onChange={(e) => setFullName(e.target.value)} required />
+        </div>
+
+        <div className="field">
+          <label className="label">Community in Arabian Ranches</label>
+          <select className="input" value={subArea} onChange={(e) => setSubArea(e.target.value)} required>
+            <option value="">Select your community…</option>
+            {SUB_AREAS.map((a) => <option key={a} value={a}>{a}</option>)}
+          </select>
+        </div>
+
+        <button className="btn full" disabled={loading}>{loading ? 'Saving…' : 'Save changes'}</button>
+      </form>
+
+      <div className="email-box">
+        <div className="email-head">
+          <div>
+            <div className="label" style={{ marginBottom: 2 }}>Email</div>
+            <div className="email-current">{currentEmail || '—'}</div>
+            <div className="hint" style={{ marginTop: 4 }}>You sign in with this address, and it’s where folks sends your notifications.</div>
+          </div>
+          {!showEmail && (
+            <button type="button" className="btn sm ghost" onClick={() => { setShowEmail(true); setEmailMsg(''); setEmailErr('') }}>
+              Change
+            </button>
+          )}
+        </div>
+
+        {emailMsg && <div className="email-ok">{emailMsg}</div>}
+
+        {showEmail && (
+          <form onSubmit={changeEmail} style={{ marginTop: 12 }}>
+            {emailErr && <div className="err">{emailErr}</div>}
+            <label className="label">New email</label>
+            <input className="input" type="email" value={newEmail} onChange={(e) => setNewEmail(e.target.value)}
+              placeholder="you@example.com" autoComplete="email" required />
+            <div className="email-actions">
+              <button className="btn sm" disabled={emailLoading}>{emailLoading ? 'Sending…' : 'Send confirmation link'}</button>
+              <button type="button" className="linkish" onClick={() => { setShowEmail(false); setNewEmail(''); setEmailErr('') }}>Cancel</button>
+            </div>
+          </form>
+        )}
       </div>
-
-      <div className="field">
-        <label className="label">Full name</label>
-        <input className="input" value={fullName} onChange={(e) => setFullName(e.target.value)} required />
-      </div>
-
-      <div className="field">
-        <label className="label">Community in Arabian Ranches</label>
-        <select className="input" value={subArea} onChange={(e) => setSubArea(e.target.value)} required>
-          <option value="">Select your community…</option>
-          {SUB_AREAS.map((a) => <option key={a} value={a}>{a}</option>)}
-        </select>
-      </div>
-
-      <button className="btn full" disabled={loading}>{loading ? 'Saving…' : 'Save changes'}</button>
-    </form>
+    </>
   )
 }

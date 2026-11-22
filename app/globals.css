@@ -561,3 +561,11 @@ a{color:inherit;text-decoration:none}
   .wel-sub{font-size:17px}
   .wel-how-h{text-align:left}
 }
+
+/* edit-profile: change sign-in email */
+.email-box{background:#fff;border:1px solid var(--line);border-radius:16px;padding:16px 18px;margin-top:18px;box-shadow:var(--shadow-sm)}
+.email-head{display:flex;align-items:flex-start;gap:12px}
+.email-head .btn{flex:0 0 auto;margin-left:auto}
+.email-current{font-size:14px;font-weight:600;color:var(--ink);word-break:break-all}
+.email-actions{display:flex;align-items:center;gap:14px;margin-top:12px}
+.email-ok{background:var(--green-soft);color:var(--green);border-radius:12px;padding:11px 13px;font-size:13px;line-height:1.5;margin-top:12px}

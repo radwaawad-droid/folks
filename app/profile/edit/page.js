@@ -22,7 +22,7 @@ export default async function EditProfilePage() {
         <h1 className="sec-title" style={{ marginTop: 12 }}>Edit profile</h1>
         <EditProfileForm profile={{
           full_name: profile.full_name, sub_area: profile.sub_area || '',
-          avatar_url: profile.avatar_url || null,
+          avatar_url: profile.avatar_url || null, email: user.email || '',
         }} />
       </main>
     </>

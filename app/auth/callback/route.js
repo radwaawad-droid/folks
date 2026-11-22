@@ -16,6 +16,17 @@ export async function GET(request) {
     if (error) {
       return NextResponse.redirect(`${origin}/?auth_error=1`)
     }
+    // Keep the notification email in lockstep with the sign-in email. This also
+    // lands the final step of an email change: the confirmation link comes
+    // through here, so notify_email picks up the new address automatically.
+    try {
+      const { data: { user } } = await supabase.auth.getUser()
+      if (user?.email) {
+        await supabase.from('profiles')
+          .update({ notify_email: user.email.toLowerCase() })
+          .eq('id', user.id)
+      }
+    } catch (_) { /* best-effort */ }
   }
   return NextResponse.redirect(`${origin}${next}`)
 }
