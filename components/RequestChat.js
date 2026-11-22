@@ -62,7 +62,7 @@ export default function RequestChat({ replyId, meId, initial, disabled = false }
   }
 
   return (
-    <div className="chat chat-inline">
+    <div className="chat">
       <div className="chat-body">
         {messages.length === 0 && (
           <div className="chat-empty">Agree on specs, cost and a pickup time.</div>
@@ -83,10 +83,6 @@ export default function RequestChat({ replyId, meId, initial, disabled = false }
           </button>
         </form>
       )}
-
-      <style jsx>{`
-        .chat-inline{margin-top:10px}
-      `}</style>
     </div>
   )
 }
