@@ -8,6 +8,7 @@ export const dynamic = 'force-dynamic'
 export async function GET(request) {
   const { searchParams, origin } = new URL(request.url)
   const code = searchParams.get('code')
+  const verified = searchParams.get('verified') === '1'  // sign-up email confirmation
   const next = searchParams.get('next') || '/onboarding'
 
   if (code) {
@@ -27,6 +28,14 @@ export async function GET(request) {
           .eq('id', user.id)
       }
     } catch (_) { /* best-effort */ }
+
+    // Sign-up confirmation: the account is now verified, but we want the member
+    // to sign in themselves. Drop the auto-created session and send them to the
+    // sign-in page.
+    if (verified) {
+      try { await supabase.auth.signOut() } catch (_) {}
+      return NextResponse.redirect(`${origin}/?verified=1`)
+    }
   }
   return NextResponse.redirect(`${origin}${next}`)
 }

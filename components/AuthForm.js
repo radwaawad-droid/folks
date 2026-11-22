@@ -1,6 +1,6 @@
 'use client'
 
-import { useState } from 'react'
+import { useState, useEffect } from 'react'
 import { createClient } from '@/utils/supabase/client'
 
 const SUB_AREAS = ['Saheel','Palmera','Alvorada','Mirador','Alma','Savannah','Hattan','Al Reem','AR2','AR3','Other / not sure']
@@ -22,6 +22,17 @@ export default function AuthForm() {
 
   function switchMode(m) { setMode(m); setError(''); setNotice('') }
   const origin = typeof window !== 'undefined' ? window.location.origin : ''
+
+  // Arriving here straight after confirming the sign-up email: show the sign-in
+  // tab with a success note so the member can log in.
+  useEffect(() => {
+    try {
+      if (new URLSearchParams(window.location.search).get('verified') === '1') {
+        setMode('signin')
+        setNotice('Your email is verified — please sign in to continue.')
+      }
+    } catch (_) {}
+  }, [])
 
   async function google() {
     setError(''); setNotice('')
@@ -64,7 +75,7 @@ export default function AuthForm() {
         email: addr,
         password,
         options: {
-          emailRedirectTo: `${origin}/auth/callback`,
+          emailRedirectTo: `${origin}/auth/callback?verified=1`,
           data: { full_name: fullName.trim(), sub_area: subArea },
         },
       })
