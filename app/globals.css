@@ -66,7 +66,7 @@ a{color:inherit;text-decoration:none}
 .browse-head{display:flex;align-items:baseline;justify-content:space-between;margin-bottom:16px}
 .browse-head h1{font-size:27px;font-weight:600}
 .grid{display:grid;grid-template-columns:repeat(auto-fill,minmax(175px,1fr));gap:16px}
-@media(max-width:4000px){
+@media(max-width:860px){
   .grid{grid-template-columns:repeat(3,1fr);gap:9px}
   .nav-search,.locpill{display:none}
   .page{padding-top:12px}
@@ -515,3 +515,49 @@ a{color:inherit;text-decoration:none}
 .gallery-thumb{width:62px;height:62px;border-radius:12px;overflow:hidden;border:2px solid transparent;background:#fff;padding:0;cursor:pointer}
 .gallery-thumb.on{border-color:var(--green)}
 .gallery-thumb img{width:100%;height:100%;object-fit:cover;display:block}
+
+/* ===================================================================== */
+/* DESKTOP (≥861px): a real website, not a phone frame.                   */
+/* Phones/tablets (≤860px) keep the app look above; this layer unframes   */
+/* the app on larger screens — top nav, full-width grid, no bottom tabs.  */
+/* ===================================================================== */
+@media(min-width:861px){
+  /* drop the zoom-out — render at full size on big screens */
+  html{zoom:1}
+  .zoom-page{zoom:1}
+
+  /* remove the branded backdrop + centered 480px panel */
+  body{background:var(--paper)}
+  .app-shell{max-width:none;margin:0;min-height:100vh;background:var(--paper);
+    box-shadow:none;border-left:none;border-right:none}
+
+  /* show the real top nav; hide the mobile bottom tab bar */
+  .nav-desktop{display:inline-flex !important;align-items:center}
+  .locpill{display:inline-flex}
+  .nav-search{display:block}
+  .tabbar{display:none}
+  .page{padding:30px 0 60px}
+
+  /* listings become a proper product grid */
+  .grid{grid-template-columns:repeat(auto-fill,minmax(205px,1fr));gap:20px}
+  .browse-head{flex-direction:row;align-items:baseline;gap:16px;margin-bottom:20px}
+  .browse-head h1{font-size:28px;line-height:1.1}
+  .result-count{font-size:14px}
+  .chips{margin-bottom:22px}
+
+  /* a touch more generous card text at desktop sizes */
+  .item .t{font-size:14px}
+  .item .p{font-size:14px}
+  .item .l{font-size:11.5px}
+  .item .mt{padding:11px 12px 13px}
+
+  /* welcome / landing: two-column hero with the sign-in card alongside */
+  .wel-main{max-width:1060px;display:grid;grid-template-columns:1.08fr .92fr;gap:54px;
+    align-items:start;grid-template-areas:"hero auth" "how auth";padding-block:52px 34px}
+  .wel-hero{grid-area:hero;padding:0}
+  .wel-auth{grid-area:auth;margin-top:0;position:sticky;top:88px}
+  .wel-how{grid-area:how;margin-top:16px}
+  .wel-h1{font-size:clamp(38px,4vw,50px)}
+  .wel-sub{font-size:17px}
+  .wel-how-h{text-align:left}
+}
