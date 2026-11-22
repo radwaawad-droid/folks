@@ -583,3 +583,17 @@ a{color:inherit;text-decoration:none}
 .field-err{color:#B23C1E;font-size:12.5px;line-height:1.4;margin-top:6px}
 .input.invalid{border-color:#D9603B;box-shadow:0 0 0 3px rgba(217,96,59,.12)}
 .input.invalid:focus{border-color:#D9603B;box-shadow:0 0 0 3px rgba(217,96,59,.18)}
+
+/* skeleton loaders (Browse) */
+.sk{position:relative;overflow:hidden;background:var(--line-2);border-radius:10px}
+.sk::after{content:"";position:absolute;inset:0;transform:translateX(-100%);
+  background:linear-gradient(90deg,transparent,rgba(255,255,255,.55),transparent);animation:sk-shimmer 1.3s infinite}
+@keyframes sk-shimmer{100%{transform:translateX(100%)}}
+@media(prefers-reduced-motion:reduce){ .sk::after{animation:none} }
+.sk-search{height:46px;border-radius:12px;margin-bottom:14px}
+.sk-chips{display:flex;gap:8px;overflow:hidden;margin-bottom:16px}
+.sk-chip{height:34px;width:84px;border-radius:12px;flex:0 0 auto}
+.sk-head{height:22px;width:58%;border-radius:8px;margin-bottom:16px}
+.sk-card{background:#fff;border:1px solid var(--line-2);border-radius:16px;overflow:hidden;padding-bottom:10px}
+.sk-ph{aspect-ratio:1/1;border-radius:0}
+.sk-line{height:11px;margin:7px 9px 0;border-radius:6px}
