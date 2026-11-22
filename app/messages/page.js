@@ -61,6 +61,7 @@ export default async function MessagesPage() {
     <>
       <Nav />
       <main className="container page">
+        <Link href="/browse" className="linkish" style={{ display: 'inline-block', marginBottom: 12 }}>← Back to home</Link>
         <h1 className="sec-title" style={{ marginTop: 6 }}>Messages</h1>
         <p className="muted-sub">Coordinate pickups, returns and Wanted offers with your neighbours.</p>
 

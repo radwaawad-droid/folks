@@ -27,6 +27,7 @@ export default async function RequestsPage() {
     <>
       <Nav />
       <main className="container page">
+        <Link href="/browse" className="linkish" style={{ display: 'inline-block', marginBottom: 12 }}>← Back to home</Link>
         <div className="sec-head" style={{ marginTop: 6 }}>
           <div>
             <h1 className="sec-title" style={{ margin: 0 }}>Wanted in Arabian Ranches</h1>
