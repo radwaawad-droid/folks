@@ -13,7 +13,7 @@ export default async function MessagesPage() {
   // Any booking I'm part of can hold a conversation.
   const { data: bookings = [] } = await supabase
     .from('bookings')
-    .select('*, item:items(title), borrower:profiles!borrower_id(full_name, username), lender:profiles!lender_id(full_name, username)')
+    .select('*, item:items(title), borrower:profiles!borrower_id(full_name), lender:profiles!lender_id(full_name)')
     .or(`borrower_id.eq.${user.id},lender_id.eq.${user.id}`)
     .order('created_at', { ascending: false })
 

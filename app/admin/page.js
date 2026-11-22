@@ -18,12 +18,12 @@ export default async function AdminPage() {
 
   const { data: items = [] } = await admin
     .from('items')
-    .select('id, title, status, is_free, fee_per_day, photos, created_at, owner:profiles(id, full_name, username)')
+    .select('id, title, status, is_free, fee_per_day, photos, created_at, owner:profiles(id, full_name)')
     .order('created_at', { ascending: false })
 
   const { data: profiles = [] } = await admin
     .from('profiles')
-    .select('id, full_name, username, sub_area, notify_email, banned, is_admin, created_at')
+    .select('id, full_name, sub_area, notify_email, banned, is_admin, created_at')
     .order('created_at', { ascending: false })
 
   const { data: categories = [] } = await admin

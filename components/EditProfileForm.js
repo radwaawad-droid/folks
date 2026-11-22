@@ -81,12 +81,6 @@ export default function EditProfileForm({ profile }) {
         <div className="hint">For notifications when a neighbour wants to borrow or messages you. Never shared.</div>
       </div>
 
-      <div className="field">
-        <label className="label">Username</label>
-        <input className="input" value={`@${profile.username || ''}`} disabled />
-        <div className="hint">Usernames can’t be changed.</div>
-      </div>
-
       <button className="btn full" disabled={loading}>{loading ? 'Saving…' : 'Save changes'}</button>
     </form>
   )

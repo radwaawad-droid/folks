@@ -66,7 +66,6 @@ export default async function ProfilePage() {
               : <span className="avatar big">{initial}</span>}
             <div className="ph-id">
               <h1 className="pname">{profile.full_name}</h1>
-              {profile.username && <div className="uname">@{profile.username}</div>}
               <div className="muted-sub" style={{ marginTop: 4 }}>
                 {profile.sub_area ? `${profile.sub_area} · ` : ''}Arabian Ranches
               </div>

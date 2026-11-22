@@ -23,10 +23,10 @@ export async function POST(req) {
     // Read the sender's details with the service-role client.
     const admin = createAdminClient()
     const { data: me } = await admin
-      .from('profiles').select('full_name, username, notify_email, sub_area').eq('id', user.id).maybeSingle()
+      .from('profiles').select('full_name, notify_email, sub_area').eq('id', user.id).maybeSingle()
 
     const label = kind === 'complaint' ? 'Complaint' : 'Suggestion'
-    const senderName = me?.full_name || me?.username || 'A folks member'
+    const senderName = me?.full_name || 'A folks member'
     const senderEmail = me?.notify_email || null
 
     const html = `
@@ -35,7 +35,7 @@ export async function POST(req) {
       <p style="font-size:14px;line-height:1.6;margin-top:16px;white-space:pre-wrap">${escapeHtml(text)}</p>
       <hr style="border:none;border-top:1px solid #ECE6DB;margin:20px 0" />
       <p style="font-size:13px;color:#6B7770;line-height:1.6;margin:0">
-        From: <strong>${escapeHtml(senderName)}</strong>${me?.username ? ` (@${escapeHtml(me.username)})` : ''}<br/>
+        From: <strong>${escapeHtml(senderName)}</strong><br/>
         ${me?.sub_area ? `Area: ${escapeHtml(me.sub_area)}<br/>` : ''}
         ${senderEmail ? `Email: ${escapeHtml(senderEmail)}` : 'No email on file'}<br/>
         User ID: ${user.id}

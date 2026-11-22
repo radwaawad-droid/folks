@@ -49,10 +49,10 @@ export default function AdminPanel({ items, profiles, categories = [], counts, s
 
   const ql = q.trim().toLowerCase()
   const shownItems = ql
-    ? items.filter((i) => `${i.title} ${i.owner?.full_name || ''} ${i.owner?.username || ''}`.toLowerCase().includes(ql))
+    ? items.filter((i) => `${i.title} ${i.owner?.full_name || ''}`.toLowerCase().includes(ql))
     : items
   const shownProfiles = ql
-    ? profiles.filter((p) => `${p.full_name || ''} ${p.username || ''} ${p.notify_email || ''} ${p.sub_area || ''}`.toLowerCase().includes(ql))
+    ? profiles.filter((p) => `${p.full_name || ''} ${p.notify_email || ''} ${p.sub_area || ''}`.toLowerCase().includes(ql))
     : profiles
 
   const tiles = stats ? [
@@ -120,7 +120,7 @@ export default function AdminPanel({ items, profiles, categories = [], counts, s
                 <div className="row-main">
                   <b>{it.title}</b>
                   <small>
-                    {it.owner?.full_name || 'Unknown'}{it.owner?.username ? ` · @${it.owner.username}` : ''}
+                    {it.owner?.full_name || 'Unknown'}
                     {' · '}{it.is_free ? 'Free' : `AED ${it.fee_per_day}/day`}
                     {it.status === 'paused' ? ' · Paused' : ''}
                     {' · '}{fmtDate(it.created_at)}
@@ -153,7 +153,7 @@ export default function AdminPanel({ items, profiles, categories = [], counts, s
                     {p.banned && <span className="admin-pill banned">Banned</span>}
                   </b>
                   <small>
-                    {p.username ? `@${p.username}` : ''}{p.sub_area ? ` · ${p.sub_area}` : ''}
+                    {p.sub_area ? p.sub_area : ''}
                     {p.notify_email ? ` · ${p.notify_email}` : ''}
                     {' · '}{counts[p.id] || 0} listing{(counts[p.id] || 0) === 1 ? '' : 's'}
                     {' · joined '}{fmtDate(p.created_at)}

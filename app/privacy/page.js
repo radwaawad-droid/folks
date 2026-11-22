@@ -36,8 +36,8 @@ export default function PrivacyPage() {
           <h2 style={h2}>Information we collect</h2>
           <p style={p}>We collect only what we need to run folks:</p>
           <ul style={{ paddingLeft: 20, margin: 0 }}>
-            <li style={li}><strong>Account &amp; profile:</strong> your name, the community (sub-area) you choose, a
-              username, your email address, and — if you create an account with an email and password — a password,
+            <li style={li}><strong>Account &amp; profile:</strong> your name, the community (sub-area) you choose,
+              your email address, and — if you create an account with an email and password — a password,
               which is stored only in a securely hashed form (we never see it in plain text).</li>
             <li style={li}><strong>Google sign-in:</strong> if you choose “Continue with Google”, we receive your
               name, email address, and profile picture from Google to create your account. We do not receive your
