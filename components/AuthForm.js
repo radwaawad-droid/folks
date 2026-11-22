@@ -84,7 +84,7 @@ export default function AuthForm() {
         email: addr,
         password,
         options: {
-          emailRedirectTo: `${origin}/auth/callback?verified=1`,
+          emailRedirectTo: `${origin}/auth/callback`,
           data: { full_name: fullName.trim(), sub_area: subArea },
         },
       })
