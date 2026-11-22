@@ -1,6 +1,5 @@
 import './globals.css'
 import PWARegister from '@/components/PWARegister'
-import InstallPrompt from '@/components/InstallPrompt'
 import NotifPrompt from '@/components/NotifPrompt'
 import BootSplash from '@/components/BootSplash'
 
@@ -42,7 +41,6 @@ export default function RootLayout({ children }) {
         <BootSplash />
         <div className="app-shell">{children}</div>
         <PWARegister />
-        <InstallPrompt />
         <NotifPrompt />
       </body>
     </html>
