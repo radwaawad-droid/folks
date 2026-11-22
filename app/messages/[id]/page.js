@@ -46,17 +46,9 @@ export default async function ThreadPage({ params }) {
       <>
         <Nav />
         <main className="container page">
-          <Link href="/messages" className="linkish">← Back to messages</Link>
-          <div className="thread-head">
-            <div className="avatar" style={{ width: 42, height: 42 }}>
-              {(other?.full_name || 'N').charAt(0).toUpperCase()}
-            </div>
-            <div>
-              <div className="thread-name">{other?.full_name || 'Neighbour'}</div>
-              <div className="thread-sub">Wanted: {reply.request.title || 'a request'}</div>
-            </div>
-          </div>
-          <RequestChat replyId={replyId} meId={user.id} initial={initial} />
+          <Link href="/messages" className="linkish" style={{ display: 'inline-block', marginBottom: 12 }}>← Back to messages</Link>
+          <RequestChat replyId={replyId} meId={user.id} initial={initial}
+            otherName={other?.full_name || 'Neighbour'} otherSub={`Wanted: ${reply.request.title || 'a request'}`} />
         </main>
       </>
     )
@@ -79,17 +71,9 @@ export default async function ThreadPage({ params }) {
     <>
       <Nav />
       <main className="container page">
-        <Link href="/messages" className="linkish">← Back to messages</Link>
-        <div className="thread-head">
-          <div className="avatar" style={{ width: 42, height: 42 }}>
-            {(other?.full_name || 'N').charAt(0).toUpperCase()}
-          </div>
-          <div>
-            <div className="thread-name">{other?.full_name || 'Neighbour'}</div>
-            <div className="thread-sub">{booking.item?.title || 'Item'} · {booking.status}</div>
-          </div>
-        </div>
-        <ChatThread bookingId={id} meId={user.id} initial={initial} />
+        <Link href="/messages" className="linkish" style={{ display: 'inline-block', marginBottom: 12 }}>← Back to messages</Link>
+        <ChatThread bookingId={id} meId={user.id} initial={initial}
+          otherName={other?.full_name || 'Neighbour'} otherSub={`${booking.item?.title || 'Item'} · ${booking.status}`} />
       </main>
     </>
   )

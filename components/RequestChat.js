@@ -12,7 +12,7 @@ function fmtTime(ts) {
 // Private 1:1 board attached to a reply (the "I have this" offer).
 // Both the requester and the neighbour who offered can talk here to agree
 // on specs, cost and pickup.
-export default function RequestChat({ replyId, meId, initial, disabled = false }) {
+export default function RequestChat({ replyId, meId, initial, disabled = false, otherName, otherSub }) {
   const supabase = createClient()
   const [messages, setMessages] = useState(initial || [])
   const [body, setBody] = useState('')
@@ -68,6 +68,15 @@ export default function RequestChat({ replyId, meId, initial, disabled = false }
 
   return (
     <div className="chat">
+      {otherName && (
+        <div className="chat-head">
+          <div className="avatar" style={{ width: 38, height: 38 }}>{otherName.charAt(0).toUpperCase()}</div>
+          <div>
+            <div className="chat-head-name">{otherName}</div>
+            {otherSub && <div className="chat-head-sub">{otherSub}</div>}
+          </div>
+        </div>
+      )}
       <div className="chat-body">
         {messages.length === 0 && (
           <div className="chat-empty">Agree on specs, cost and a pickup time.</div>
