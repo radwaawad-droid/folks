@@ -569,3 +569,8 @@ a{color:inherit;text-decoration:none}
 .email-current{font-size:14px;font-weight:600;color:var(--ink);word-break:break-all}
 .email-actions{display:flex;align-items:center;gap:14px;margin-top:12px}
 .email-ok{background:var(--green-soft);color:var(--green);border-radius:12px;padding:11px 13px;font-size:13px;line-height:1.5;margin-top:12px}
+
+/* inline field validation (e.g. email format on sign-up) */
+.field-err{color:#B23C1E;font-size:12.5px;line-height:1.4;margin-top:6px}
+.input.invalid{border-color:#D9603B;box-shadow:0 0 0 3px rgba(217,96,59,.12)}
+.input.invalid:focus{border-color:#D9603B;box-shadow:0 0 0 3px rgba(217,96,59,.18)}

@@ -5,12 +5,15 @@ import { createClient } from '@/utils/supabase/client'
 
 const SUB_AREAS = ['Saheel','Palmera','Alvorada','Mirador','Alma','Savannah','Hattan','Al Reem','AR2','AR3','Other / not sure']
 
+const isEmail = (s) => /^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(s)
+
 export default function AuthForm() {
   const supabase = createClient()
   const [mode, setMode] = useState('signup')   // 'signup' | 'signin'
   const [fullName, setFullName] = useState('')
   const [subArea, setSubArea] = useState('')
   const [email, setEmail] = useState('')
+  const [emailErr, setEmailErr] = useState('')
   const [password, setPassword] = useState('')
   const [showPw, setShowPw] = useState(false)
   const [loading, setLoading] = useState(false)
@@ -45,9 +48,10 @@ export default function AuthForm() {
   async function submit(e) {
     e.preventDefault(); setError(''); setNotice('')
     const addr = email.trim().toLowerCase()
-    if (!/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(addr)) {
-      setError('Please enter a valid email.'); return
+    if (!isEmail(addr)) {
+      setEmailErr('Please enter a valid email address, like name@example.com'); return
     }
+    setEmailErr('')
     if (password.length < 6) { setError('Password must be at least 6 characters.'); return }
 
     setLoading(true)
@@ -135,7 +139,7 @@ export default function AuthForm() {
 
       <div className="auth-or"><span>or</span></div>
 
-      <form onSubmit={submit}>
+      <form onSubmit={submit} noValidate>
         {mode === 'signup' && (
           <>
             <label className="label">Full name</label>
@@ -151,8 +155,14 @@ export default function AuthForm() {
         )}
 
         <label className="label" style={{ marginTop: mode === 'signup' ? 14 : 0 }}>Email</label>
-        <input className="input" type="email" value={email} onChange={(e) => setEmail(e.target.value)}
-          placeholder="you@example.com" autoComplete="email" required />
+        <input className={`input${emailErr ? ' invalid' : ''}`} type="email" value={email}
+          onChange={(e) => { setEmail(e.target.value); if (emailErr) setEmailErr('') }}
+          onBlur={(e) => {
+            const v = e.target.value.trim()
+            setEmailErr(v && !isEmail(v) ? 'Please enter a valid email address, like name@example.com' : '')
+          }}
+          placeholder="you@example.com" autoComplete="email" aria-invalid={!!emailErr} required />
+        {emailErr && <div className="field-err">{emailErr}</div>}
 
         <label className="label" style={{ marginTop: 14 }}>Password</label>
         <div className="pw-wrap">
