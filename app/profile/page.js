@@ -4,7 +4,6 @@ import ItemCard from '@/components/ItemCard'
 import SignOutButton from '@/components/SignOutButton'
 import IncomingRequests from '@/components/IncomingRequests'
 import BookingActions from '@/components/BookingActions'
-import GetAppLink from '@/components/GetAppLink'
 import DeleteAccount from '@/components/DeleteAccount'
 import { createClient } from '@/utils/supabase/server'
 
@@ -153,7 +152,6 @@ export default async function ProfilePage() {
           <div className="pfoot-links">
             <a className="linkish" href="/guidelines">Community guidelines</a>
             <a className="linkish" href="/feedback">Suggestions &amp; complaints</a>
-            <GetAppLink />
           </div>
           <DeleteAccount />
         </footer>
