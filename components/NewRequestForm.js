@@ -3,6 +3,7 @@
 import { useState } from 'react'
 import { createClient } from '@/utils/supabase/client'
 import { DEFAULT_CATEGORIES } from '@/lib/categories'
+import { notify } from '@/lib/notify'
 
 export default function NewRequestForm({ communityId, categories }) {
   const supabase = createClient()
@@ -19,7 +20,7 @@ export default function NewRequestForm({ communityId, categories }) {
     const { data: { user } } = await supabase.auth.getUser()
     if (!user) { window.location.href = '/'; return }
 
-    const { error: dbErr } = await supabase.from('item_requests').insert({
+    const { data: created, error: dbErr } = await supabase.from('item_requests').insert({
       requester_id: user.id,
       community_id: communityId,
       title: title.trim(),
@@ -27,9 +28,11 @@ export default function NewRequestForm({ communityId, categories }) {
       category,
       days_needed: days ? Number(days) : null,
       status: 'open',
-    })
+    }).select('id').single()
     setLoading(false)
     if (dbErr) { setError(dbErr.message); return }
+    // Push every other member that a neighbour is looking for something (no email).
+    if (created?.id) notify({ type: 'new_request', requestId: created.id })
     window.location.href = '/requests'
   }
 

@@ -70,6 +70,63 @@ export async function POST(req) {
 
     const admin = createAdminClient()
 
+    // --- Wanted board: a neighbour posted a new request. Broadcast a PUSH (no
+    // email) to every other subscribed member so they know someone's looking. ---
+    if (type === 'new_request') {
+      if (!requestId) return NextResponse.json({ ok: false, error: 'missing requestId' }, { status: 400 })
+      const { data: rq } = await admin
+        .from('item_requests').select('id, requester_id, title').eq('id', requestId).maybeSingle()
+      if (!rq) return NextResponse.json({ ok: false, error: 'not found' }, { status: 404 })
+      if (user.id !== rq.requester_id) return NextResponse.json({ ok: false, error: 'forbidden' }, { status: 403 })
+
+      const { data: subs = [] } = await admin
+        .from('push_subscriptions').select('user_id').neq('user_id', rq.requester_id)
+      const ids = [...new Set((subs || []).map((s) => s.user_id))]
+      await Promise.all(ids.map((uid) => pushToUser(uid, {
+        title: 'folks',
+        body: `A neighbour is looking for “${rq.title || 'something'}”`,
+        url: `/requests/${rq.id}`, tag: `newreq-${rq.id}`,
+      }, admin)))
+      return NextResponse.json({ ok: true, pushed: ids.length })
+    }
+
+    // --- Wanted board: a neighbour offered (started a conversation). Notify the
+    // requester by PUSH + EMAIL, linking to the chat in their Messages. ---
+    if (type === 'wanted_offer') {
+      if (!replyId) return NextResponse.json({ ok: false, error: 'missing replyId' }, { status: 400 })
+      const { data: rr } = await admin
+        .from('request_replies')
+        .select('id, responder_id, request:item_requests!request_id(id, title, requester_id)')
+        .eq('id', replyId).maybeSingle()
+      if (!rr || !rr.request) return NextResponse.json({ ok: false, error: 'not found' }, { status: 404 })
+      if (user.id !== rr.responder_id) return NextResponse.json({ ok: false, error: 'forbidden' }, { status: 403 })
+
+      const requesterId = rr.request.requester_id
+      const convUrl = `/messages/req_${rr.id}`
+      await pushToUser(requesterId, {
+        title: 'folks',
+        body: `A neighbour is offering “${rr.request.title || 'your request'}”`,
+        url: convUrl, tag: `offer-${rr.id}`,
+      }, admin)
+
+      const { data: rp } = await admin
+        .from('profiles').select('notify_email, full_name').eq('id', requesterId).maybeSingle()
+      const to = rp?.notify_email
+      if (!to) return NextResponse.json({ ok: true, skipped: 'no-email' })
+
+      const reqTitle = rr.request.title || 'your request'
+      const html = emailHtml({
+        name: rp?.full_name,
+        intro: `Good news — a neighbour is offering what you asked for on your Wanted post <strong>“${reqTitle}”</strong>. Open folks to read their message and reply.`,
+        link: `${SITE}${convUrl}`,
+        cta: 'Read the offer',
+      })
+      const sent = await sendEmail({ to, subject: `A neighbour is offering “${reqTitle}”`, html, name: rp?.full_name })
+      if (sent.skipped) return NextResponse.json({ ok: true, skipped: sent.skipped })
+      if (!sent.ok) return NextResponse.json({ ok: false, error: 'send failed', provider: sent.provider, detail: sent.detail }, { status: 502 })
+      return NextResponse.json({ ok: true, provider: sent.provider })
+    }
+
     // --- Wanted board: someone replied to a neighbour's request. ---
     // This flow has no booking; it notifies the requester that a reply came in.
     if (type === 'reply') {
@@ -171,10 +228,11 @@ export async function POST(req) {
         .is('read_at', null)
       if ((count || 0) > 1) return NextResponse.json({ ok: true, skipped: 'already-unread' })
 
+      const convUrl = `/messages/req_${replyId}`
       await pushToUser(recipientId, {
         title: 'folks',
         body: `New message about “${rr.request.title || 'a Wanted post'}”`,
-        url: `/requests/${rr.request.id}`, tag: `wmsg-${replyId}`,
+        url: convUrl, tag: `wmsg-${replyId}`,
       }, admin)
 
       const { data: rp } = await admin
@@ -186,7 +244,7 @@ export async function POST(req) {
       const html = emailHtml({
         name: rp?.full_name,
         intro: `You have a new message on folks about the Wanted post <strong>“${reqTitle}”</strong>. Open the app to reply and sort out the details.`,
-        link: `${SITE}/requests/${rr.request.id}`,
+        link: `${SITE}${convUrl}`,
         cta: 'Read & reply',
       })
       const sent = await sendEmail({ to, subject: `New message about “${reqTitle}”`, html, name: rp?.full_name })

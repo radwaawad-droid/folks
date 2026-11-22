@@ -15,10 +15,11 @@ export default async function Nav() {
 
   if (user) {
     // Run the independent lookups together instead of one after another.
-    const [{ data: profile }, { count: reqCount }, { data: myBookings }] = await Promise.all([
+    const [{ data: profile }, { count: reqCount }, { data: myBookings }, { data: myReqs }] = await Promise.all([
       supabase.from('profiles').select('full_name, avatar_url, banned, is_admin, wanted_seen_at').eq('id', user.id).maybeSingle(),
       supabase.from('bookings').select('id', { count: 'exact', head: true }).eq('lender_id', user.id).eq('status', 'requested'),
       supabase.from('bookings').select('id').or(`borrower_id.eq.${user.id},lender_id.eq.${user.id}`),
+      supabase.from('item_requests').select('id').eq('requester_id', user.id),
     ])
     // Banned members are signed out of the app everywhere Nav renders.
     if (profile?.banned) redirect('/suspended')
@@ -27,19 +28,35 @@ export default async function Nav() {
     isAdmin = !!profile?.is_admin
     pendingRequests = reqCount || 0
 
-    const ids = (myBookings || []).map((b) => b.id)
-    const [{ count: newWanted }, msg] = await Promise.all([
+    const bookingIds = (myBookings || []).map((b) => b.id)
+    const myReqIds = (myReqs || []).map((r) => r.id)
+
+    // Wanted conversations I'm part of (as the neighbour who offered, or as the
+    // requester whose post got offers).
+    const replyQ = myReqIds.length
+      ? supabase.from('request_replies').select('id').or(`responder_id.eq.${user.id},request_id.in.(${myReqIds.join(',')})`)
+      : supabase.from('request_replies').select('id').eq('responder_id', user.id)
+
+    const [{ count: newWanted }, bookingMsg, { data: myReplies }] = await Promise.all([
       supabase.from('item_requests')
         .select('id', { count: 'exact', head: true })
         .eq('status', 'open').neq('requester_id', user.id)
         .gt('created_at', profile?.wanted_seen_at || '1970-01-01T00:00:00Z'),
-      ids.length
+      bookingIds.length
         ? supabase.from('messages').select('id', { count: 'exact', head: true })
-            .in('booking_id', ids).neq('sender_id', user.id).is('read_at', null)
+            .in('booking_id', bookingIds).neq('sender_id', user.id).is('read_at', null)
         : Promise.resolve({ count: 0 }),
+      replyQ,
     ])
     wantedNew = (newWanted || 0) > 0
-    unreadMessages = msg?.count || 0
+
+    const replyIds = (myReplies || []).map((r) => r.id)
+    const { count: reqMsgUnread } = replyIds.length
+      ? await supabase.from('request_messages').select('id', { count: 'exact', head: true })
+          .in('reply_id', replyIds).neq('sender_id', user.id).is('read_at', null)
+      : { count: 0 }
+
+    unreadMessages = (bookingMsg?.count || 0) + (reqMsgUnread || 0)
   }
 
   const Avatar = () => (
