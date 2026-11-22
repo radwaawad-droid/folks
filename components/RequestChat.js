@@ -4,6 +4,11 @@ import { useEffect, useRef, useState } from 'react'
 import { createClient } from '@/utils/supabase/client'
 import { notify } from '@/lib/notify'
 
+function fmtTime(ts) {
+  try { return new Date(ts).toLocaleTimeString([], { hour: 'numeric', minute: '2-digit' }) }
+  catch { return '' }
+}
+
 // Private 1:1 board attached to a reply (the "I have this" offer).
 // Both the requester and the neighbour who offered can talk here to agree
 // on specs, cost and pickup.
@@ -67,9 +72,19 @@ export default function RequestChat({ replyId, meId, initial, disabled = false }
         {messages.length === 0 && (
           <div className="chat-empty">Agree on specs, cost and a pickup time.</div>
         )}
-        {messages.map((m) => (
-          <div key={m.id} className={`bub ${m.sender_id === meId ? 'me' : 'them'}`}>{m.body}</div>
-        ))}
+        {messages.map((m, i) => {
+          const mine = m.sender_id === meId
+          const lastMine = mine && i === messages.map((x) => x.sender_id === meId).lastIndexOf(true)
+          return (
+            <div key={m.id} className={`msg ${mine ? 'me' : 'them'}`}>
+              <div className={`bub ${mine ? 'me' : 'them'}`}>{m.body}</div>
+              <div className="time">
+                {fmtTime(m.created_at)}
+                {lastMine && m.read_at && <> · <span className="rr">Read</span></>}
+              </div>
+            </div>
+          )
+        })}
         <div ref={endRef} />
       </div>
       {!disabled && (

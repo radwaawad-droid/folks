@@ -4,6 +4,11 @@ import { useEffect, useRef, useState } from 'react'
 import { createClient } from '@/utils/supabase/client'
 import { notify } from '@/lib/notify'
 
+function fmtTime(ts) {
+  try { return new Date(ts).toLocaleTimeString([], { hour: 'numeric', minute: '2-digit' }) }
+  catch { return '' }
+}
+
 export default function ChatThread({ bookingId, meId, initial }) {
   const supabase = createClient()
   const [messages, setMessages] = useState(initial || [])
@@ -71,11 +76,19 @@ export default function ChatThread({ bookingId, meId, initial }) {
         {messages.length === 0 && (
           <div className="chat-empty">Say hello and arrange a pickup.</div>
         )}
-        {messages.map((m) => (
-          <div key={m.id} className={`bub ${m.sender_id === meId ? 'me' : 'them'}`}>
-            {m.body}
-          </div>
-        ))}
+        {messages.map((m, i) => {
+          const mine = m.sender_id === meId
+          const lastMine = mine && i === messages.map((x) => x.sender_id === meId).lastIndexOf(true)
+          return (
+            <div key={m.id} className={`msg ${mine ? 'me' : 'them'}`}>
+              <div className={`bub ${mine ? 'me' : 'them'}`}>{m.body}</div>
+              <div className="time">
+                {fmtTime(m.created_at)}
+                {lastMine && m.read_at && <> · <span className="rr">Read</span></>}
+              </div>
+            </div>
+          )
+        })}
         <div ref={endRef} />
       </div>
       <form className="composer" onSubmit={send}>
