@@ -1,6 +1,6 @@
 'use client'
 
-import { useEffect, useRef, useState } from 'react'
+import { Fragment, useEffect, useRef, useState } from 'react'
 import { createClient } from '@/utils/supabase/client'
 import { notify } from '@/lib/notify'
 import { avatarColor } from '@/lib/avatar'
@@ -8,6 +8,16 @@ import { avatarColor } from '@/lib/avatar'
 function fmtTime(ts) {
   try { return new Date(ts).toLocaleTimeString([], { hour: 'numeric', minute: '2-digit' }) }
   catch { return '' }
+}
+function sameDay(a, b) {
+  return new Date(a).toDateString() === new Date(b).toDateString()
+}
+function dayLabel(ts) {
+  const d = new Date(ts), today = new Date(), yest = new Date()
+  yest.setDate(today.getDate() - 1)
+  if (d.toDateString() === today.toDateString()) return 'Today'
+  if (d.toDateString() === yest.toDateString()) return 'Yesterday'
+  return d.toLocaleDateString([], { weekday: 'short', day: 'numeric', month: 'short' })
 }
 
 // Private 1:1 board attached to a reply (the "I have this" offer).
@@ -85,14 +95,19 @@ export default function RequestChat({ replyId, meId, initial, disabled = false, 
         {messages.map((m, i) => {
           const mine = m.sender_id === meId
           const lastMine = mine && i === messages.map((x) => x.sender_id === meId).lastIndexOf(true)
+          const prev = messages[i - 1]
+          const showDate = !prev || !sameDay(prev.created_at, m.created_at)
           return (
-            <div key={m.id} className={`msg ${mine ? 'me' : 'them'}`}>
-              <div className={`bub ${mine ? 'me' : 'them'}`}>{m.body}</div>
-              <div className="time">
-                {fmtTime(m.created_at)}
-                {lastMine && m.read_at && <> · <span className="rr">Read</span></>}
+            <Fragment key={m.id}>
+              {showDate && <div className="chat-date">{dayLabel(m.created_at)}</div>}
+              <div className={`msg ${mine ? 'me' : 'them'}`}>
+                <div className={`bub ${mine ? 'me' : 'them'}`}>{m.body}</div>
+                <div className="time">
+                  {fmtTime(m.created_at)}
+                  {lastMine && m.read_at && <> · <span className="rr">Read</span></>}
+                </div>
               </div>
-            </div>
+            </Fragment>
           )
         })}
         <div ref={endRef} />
