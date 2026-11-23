@@ -3,6 +3,7 @@
 import { useEffect, useRef, useState } from 'react'
 import { createClient } from '@/utils/supabase/client'
 import { notify } from '@/lib/notify'
+import { avatarColor } from '@/lib/avatar'
 
 function fmtTime(ts) {
   try { return new Date(ts).toLocaleTimeString([], { hour: 'numeric', minute: '2-digit' }) }
@@ -70,7 +71,7 @@ export default function RequestChat({ replyId, meId, initial, disabled = false, 
     <div className="chat">
       {otherName && (
         <div className="chat-head">
-          <div className="avatar" style={{ width: 38, height: 38 }}>{otherName.charAt(0).toUpperCase()}</div>
+          <div className="avatar" style={{ width: 38, height: 38, background: avatarColor(otherName) }}>{otherName.charAt(0).toUpperCase()}</div>
           <div>
             <div className="chat-head-name">{otherName}</div>
             {otherSub && <div className="chat-head-sub">{otherSub}</div>}

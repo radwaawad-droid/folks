@@ -1,12 +1,14 @@
 import Link from 'next/link'
 import { redirect } from 'next/navigation'
 import { createClient } from '@/utils/supabase/server'
+import { avatarColor } from '@/lib/avatar'
 
 export default async function Nav() {
   const supabase = createClient()
   const { data: { user } } = await supabase.auth.getUser()
 
   let initial = 'Y'
+  let avatarName = ''
   let avatarUrl = null
   let isAdmin = false
   let pendingRequests = 0
@@ -24,6 +26,7 @@ export default async function Nav() {
     // Banned members are signed out of the app everywhere Nav renders.
     if (profile?.banned) redirect('/suspended')
     initial = (profile?.full_name || 'Y').charAt(0).toUpperCase()
+    avatarName = profile?.full_name || ''
     avatarUrl = profile?.avatar_url || null
     isAdmin = !!profile?.is_admin
     pendingRequests = reqCount || 0
@@ -60,7 +63,8 @@ export default async function Nav() {
   }
 
   const Avatar = () => (
-    <Link href="/profile" className="avatar nav-avatar nav-badge-wrap" title="Your profile">
+    <Link href="/profile" className="avatar nav-avatar nav-badge-wrap" title="Your profile"
+      style={avatarUrl ? undefined : { background: avatarColor(avatarName) }}>
       {avatarUrl ? <img className="avatar-img" src={avatarUrl} alt="" /> : initial}
       {pendingRequests > 0 && <span className="nav-badge nav-badge-dot">{pendingRequests}</span>}
     </Link>

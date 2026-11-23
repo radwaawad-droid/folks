@@ -6,6 +6,7 @@ import Gallery from '@/components/Gallery'
 import DoorMark from '@/components/DoorMark'
 import { createClient } from '@/utils/supabase/server'
 import { fetchCategories, clsFor } from '@/lib/categories'
+import { avatarColor } from '@/lib/avatar'
 
 export const dynamic = 'force-dynamic'
 
@@ -113,7 +114,7 @@ export default async function ItemPage({ params }) {
             )}
 
             <div className="lendcard">
-              <span className="avatar">{initial}</span>
+              <span className="avatar" style={{ background: avatarColor(owner.full_name) }}>{initial}</span>
               <div>
                 <div className="lend-nm">{owner.full_name || 'Neighbour'}</div>
                 <div className="lend-rt">

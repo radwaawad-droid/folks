@@ -6,6 +6,7 @@ import IncomingRequests from '@/components/IncomingRequests'
 import BookingActions from '@/components/BookingActions'
 import DeleteAccount from '@/components/DeleteAccount'
 import { createClient } from '@/utils/supabase/server'
+import { avatarColor } from '@/lib/avatar'
 
 export const dynamic = 'force-dynamic'
 
@@ -62,7 +63,7 @@ export default async function ProfilePage() {
           <div className="ph-top">
             {profile.avatar_url
               ? <img className="avatar big avatar-img" src={profile.avatar_url} alt="" />
-              : <span className="avatar big">{initial}</span>}
+              : <span className="avatar big" style={{ background: avatarColor(profile.full_name) }}>{initial}</span>}
             <div className="ph-id">
               <h1 className="pname">{profile.full_name}</h1>
               <div className="muted-sub" style={{ marginTop: 4 }}>

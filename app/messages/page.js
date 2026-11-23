@@ -2,6 +2,7 @@ import { redirect } from 'next/navigation'
 import Link from 'next/link'
 import Nav from '@/components/Nav'
 import { createClient } from '@/utils/supabase/server'
+import { avatarColor } from '@/lib/avatar'
 
 export const dynamic = 'force-dynamic'
 
@@ -74,7 +75,7 @@ export default async function MessagesPage() {
           <div className="rows">
             {items.map((c) => (
               <Link className="row thread-link" key={c.key} href={c.href}>
-                <div className="avatar" style={{ width: 44, height: 44 }}>
+                <div className="avatar" style={{ width: 44, height: 44, background: avatarColor(c.name) }}>
                   {(c.name || 'N').charAt(0).toUpperCase()}
                 </div>
                 <div className="row-main">

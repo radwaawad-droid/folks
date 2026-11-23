@@ -2,6 +2,7 @@
 
 import { useState } from 'react'
 import { createClient } from '@/utils/supabase/client'
+import { avatarColor } from '@/lib/avatar'
 
 const SUB_AREAS = ['Saheel','Palmera','Alvorada','Mirador','Alma','Savannah','Hattan','Al Reem','AR2','AR3','Other / not sure']
 
@@ -76,7 +77,7 @@ export default function EditProfileForm({ profile }) {
 
         <div className="edit-avatar-row">
           {preview ? <img className="edit-avatar" src={preview} alt="" />
-                   : <span className="avatar big">{(fullName || 'Y').charAt(0).toUpperCase()}</span>}
+                   : <span className="avatar big" style={{ background: avatarColor(fullName) }}>{(fullName || 'Y').charAt(0).toUpperCase()}</span>}
           <label className="btn sm ghost edit-avatar-btn">
             Change photo
             <input type="file" accept="image/*" style={{ display: 'none' }}
