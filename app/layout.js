@@ -4,6 +4,7 @@ import NotifPrompt from '@/components/NotifPrompt'
 import BootSplash from '@/components/BootSplash'
 
 export const metadata = {
+  metadataBase: new URL('https://folksdxb.com'),
   title: 'folks — borrow from your neighbours',
   description: 'Borrow and lend everyday things with verified neighbours in Arabian Ranches.',
   manifest: '/manifest.webmanifest',
@@ -15,6 +16,20 @@ export const metadata = {
   icons: {
     icon: '/icon-192.png',
     apple: '/apple-icon.png',
+  },
+  openGraph: {
+    type: 'website',
+    url: 'https://folksdxb.com',
+    siteName: 'folks',
+    title: 'folks — a closer community',
+    description: 'Borrow and lend everyday things with your neighbours in Arabian Ranches.',
+    images: [{ url: '/og.png', width: 1200, height: 630, alt: 'folks — a closer community' }],
+  },
+  twitter: {
+    card: 'summary_large_image',
+    title: 'folks — a closer community',
+    description: 'Borrow and lend everyday things with your neighbours in Arabian Ranches.',
+    images: ['/og.png'],
   },
 }
 
