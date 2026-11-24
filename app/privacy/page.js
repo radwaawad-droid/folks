@@ -16,7 +16,7 @@ const h2 = {
 }
 const li = { margin: '7px 0', lineHeight: 1.55 }
 const p = { margin: '0 0 10px', lineHeight: 1.6 }
-const SUPPORT = 'dxbfolks@gmail.com'
+const SUPPORT = 'hello@folksdxb.com'
 
 export default function PrivacyPage() {
   return (

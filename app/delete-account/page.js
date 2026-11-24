@@ -18,7 +18,7 @@ const h2 = {
   color: 'var(--green)', margin: '0 0 10px',
 }
 const li = { margin: '7px 0', lineHeight: 1.55 }
-const SUPPORT = 'dxbfolks@gmail.com'
+const SUPPORT = 'hello@folksdxb.com'
 
 export default async function DeleteAccountPage() {
   const supabase = createClient()

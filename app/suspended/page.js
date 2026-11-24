@@ -11,7 +11,7 @@ export default function SuspendedPage() {
       <h1 className="browse-head" style={{ marginBottom: 10 }}>Account suspended</h1>
       <p className="muted-sub" style={{ marginBottom: 24 }}>
         Your folks account has been suspended, so it can’t be used right now.
-        If you think this is a mistake, please get in touch at <strong>dxbfolks@gmail.com</strong>.
+        If you think this is a mistake, please get in touch at <strong>hello@folksdxb.com</strong>.
       </p>
       <SignOutButton />
       <div style={{ marginTop: 16 }}>
