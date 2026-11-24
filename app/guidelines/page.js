@@ -80,6 +80,7 @@ export default function GuidelinesPage() {
           <ul style={{ paddingLeft: 20, margin: 0 }}>
             <li style={li}>Many items are free. Some owners set a small daily fee — that&apos;s shown on the listing.</li>
             <li style={li}>Any fee is arranged directly between neighbours. folks doesn&apos;t handle or hold payments.</li>
+            <li style={li}>Owners may also ask for an optional insurance fee — a small amount that covers accidental damage, agreed between you before handover and returned if all goes well.</li>
             <li style={li}>Keep it fair and neighbourly — this isn&apos;t about making money, it&apos;s about helping out.</li>
           </ul>
         </section>
