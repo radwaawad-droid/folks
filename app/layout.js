@@ -1,6 +1,7 @@
 import './globals.css'
 import PWARegister from '@/components/PWARegister'
 import NotifPrompt from '@/components/NotifPrompt'
+import IosInstallNudge from '@/components/IosInstallNudge'
 import BootSplash from '@/components/BootSplash'
 
 export const metadata = {
@@ -42,6 +43,7 @@ export default function RootLayout({ children }) {
         <div className="app-shell">{children}</div>
         <PWARegister />
         <NotifPrompt />
+        <IosInstallNudge />
       </body>
     </html>
   )
