@@ -3,6 +3,8 @@
 import { useState } from 'react'
 import { createClient } from '@/utils/supabase/client'
 import { avatarColor } from '@/lib/avatar'
+import ImageCropper from '@/components/ImageCropper'
+import { uploadPhoto } from '@/lib/upload'
 
 const SUB_AREAS = ['Saheel','Palmera','Alvorada','Mirador','Alma','Savannah','Hattan','Al Reem','AR2','AR3','Other / not sure']
 
@@ -11,13 +13,30 @@ export default function EditProfileForm({ profile }) {
   const [fullName, setFullName] = useState(profile.full_name || '')
   const [subArea, setSubArea] = useState(profile.sub_area || '')
   const [preview, setPreview] = useState(profile.avatar_url || null)
-  const [file, setFile] = useState(null)
+  const [newAvatar, setNewAvatar] = useState(null)     // uploaded URL for the cropped photo, or null if unchanged
+  const [pendingFile, setPendingFile] = useState(null) // raw file waiting to be cropped
+  const [uploading, setUploading] = useState(false)
   const [loading, setLoading] = useState(false)
   const [error, setError] = useState('')
 
   function onPick(f) {
-    setFile(f)
-    if (f) { const r = new FileReader(); r.onload = () => setPreview(r.result); r.readAsDataURL(f) }
+    if (!f) return
+    if (f.size > 8 * 1024 * 1024) { setError('Please choose an image under 8 MB.'); return }
+    setError('')
+    setPendingFile(f) // opens the cropper
+  }
+
+  async function onCropped(blob) {
+    setPendingFile(null)
+    setUploading(true); setError('')
+    try {
+      const url = await uploadPhoto(supabase, blob)
+      if (url) { setNewAvatar(url); setPreview(url) }
+      else setError('Couldn’t process that photo — please try another.')
+    } catch (_) {
+      setError('Couldn’t process that photo — please try another.')
+    }
+    setUploading(false)
   }
 
   async function save(e) {
@@ -25,15 +44,7 @@ export default function EditProfileForm({ profile }) {
     const { data: { user } } = await supabase.auth.getUser()
     if (!user) { window.location.href = '/'; return }
 
-    let avatar_url = profile.avatar_url || null
-    if (file) {
-      if (file.size > 2 * 1024 * 1024) { setLoading(false); setError('Please choose an image under 2 MB.'); return }
-      try {
-        avatar_url = await new Promise((res, rej) => {
-          const r = new FileReader(); r.onload = () => res(r.result); r.onerror = rej; r.readAsDataURL(file)
-        })
-      } catch (_) {}
-    }
+    const avatar_url = newAvatar !== null ? newAvatar : (profile.avatar_url || null)
 
     const { error: upErr } = await supabase.from('profiles').update({
       full_name: fullName.trim(),
@@ -54,9 +65,9 @@ export default function EditProfileForm({ profile }) {
         {preview ? <img className="edit-avatar" src={preview} alt="" />
                  : <span className="avatar big" style={{ background: avatarColor(fullName) }}>{(fullName || 'Y').charAt(0).toUpperCase()}</span>}
         <label className="btn sm ghost edit-avatar-btn">
-          Change photo
-          <input type="file" accept="image/*" style={{ display: 'none' }}
-            onChange={(e) => onPick(e.target.files?.[0] || null)} />
+          {uploading ? 'Uploading…' : (preview ? 'Change photo' : 'Add photo')}
+          <input type="file" accept="image/*" style={{ display: 'none' }} disabled={uploading}
+            onChange={(e) => { onPick(e.target.files?.[0] || null); e.target.value = '' }} />
         </label>
       </div>
 
@@ -73,7 +84,18 @@ export default function EditProfileForm({ profile }) {
         </select>
       </div>
 
-      <button className="btn full" disabled={loading}>{loading ? 'Saving…' : 'Save changes'}</button>
+      <button className="btn full" disabled={loading || uploading}>
+        {loading ? 'Saving…' : uploading ? 'Uploading photo…' : 'Save changes'}
+      </button>
+
+      {pendingFile && (
+        <ImageCropper
+          file={pendingFile}
+          out={600}
+          onDone={onCropped}
+          onCancel={() => setPendingFile(null)}
+        />
+      )}
     </form>
   )
 }
