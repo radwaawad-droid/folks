@@ -4,6 +4,8 @@ import { Fragment, useEffect, useRef, useState } from 'react'
 import { createClient } from '@/utils/supabase/client'
 import { notify } from '@/lib/notify'
 import { avatarColor } from '@/lib/avatar'
+import { uploadPhoto } from '@/lib/upload'
+import { fileToJpegBlob } from '@/lib/image'
 
 function fmtTime(ts) {
   try { return new Date(ts).toLocaleTimeString([], { hour: 'numeric', minute: '2-digit' }) }
@@ -25,6 +27,7 @@ export default function ChatThread({ bookingId, meId, initial, otherName, otherS
   const [messages, setMessages] = useState(initial || [])
   const [body, setBody] = useState('')
   const [sending, setSending] = useState(false)
+  const [uploading, setUploading] = useState(false)
   const endRef = useRef(null)
 
   function scrollToEnd() {
@@ -81,6 +84,25 @@ export default function ChatThread({ bookingId, meId, initial, otherName, otherS
     }
   }
 
+  async function sendImage(file) {
+    if (!file || uploading) return
+    setUploading(true)
+    const blob = await fileToJpegBlob(file)
+    if (!blob) { setUploading(false); return }
+    const url = await uploadPhoto(supabase, blob)
+    if (url) {
+      const { data, error } = await supabase
+        .from('messages')
+        .insert({ booking_id: bookingId, sender_id: meId, image_url: url })
+        .select().single()
+      if (!error && data) {
+        setMessages((cur) => cur.some((m) => m.id === data.id) ? cur : [...cur, data])
+        notify({ type: 'message', bookingId })
+      }
+    }
+    setUploading(false)
+  }
+
   return (
     <div className="chat">
       {otherName && (
@@ -105,7 +127,14 @@ export default function ChatThread({ bookingId, meId, initial, otherName, otherS
             <Fragment key={m.id}>
               {showDate && <div className="chat-date">{dayLabel(m.created_at)}</div>}
               <div className={`msg ${mine ? 'me' : 'them'}`}>
-                <div className={`bub ${mine ? 'me' : 'them'}`}>{m.body}</div>
+                <div className={`bub ${mine ? 'me' : 'them'}${m.image_url ? ' has-img' : ''}`}>
+                  {m.image_url && (
+                    <a href={m.image_url} target="_blank" rel="noreferrer">
+                      <img className="bub-img" src={m.image_url} alt="" loading="lazy" />
+                    </a>
+                  )}
+                  {m.body && <div className={m.image_url ? 'bub-cap' : ''}>{m.body}</div>}
+                </div>
                 <div className="time">
                   {fmtTime(m.created_at)}
                   {lastMine && m.read_at && <> · <span className="rr">Read</span></>}
@@ -117,6 +146,13 @@ export default function ChatThread({ bookingId, meId, initial, otherName, otherS
         <div ref={endRef} />
       </div>
       <form className="composer" onSubmit={send}>
+        <label className="composer-attach" aria-label="Add photo" title="Add photo">
+          {uploading
+            ? <span className="composer-spin" />
+            : <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"><rect x="3" y="3" width="18" height="18" rx="4" /><circle cx="8.5" cy="8.5" r="1.5" /><path d="M21 15l-5-5L5 21" /></svg>}
+          <input type="file" accept="image/*" hidden disabled={uploading}
+            onChange={(e) => { sendImage(e.target.files?.[0]); e.target.value = '' }} />
+        </label>
         <input className="composer-in" placeholder="Type a message…"
           value={body} onChange={(e) => setBody(e.target.value)} />
         <button className="send" disabled={sending} aria-label="Send">
